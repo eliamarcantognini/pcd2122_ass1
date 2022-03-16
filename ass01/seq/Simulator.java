@@ -4,16 +4,13 @@ import java.util.*;
 
 public class Simulator {
 
-	private SimulationView viewer;
+	private final SimulationView viewer;
 
 	/* bodies in the field */
 	ArrayList<Body> bodies;
 
 	/* boundary of the field */
 	private Boundary bounds;
-
-	/* virtual time */
-	private double vt;
 
 	/* virtual time step */
 	double dt;
@@ -33,7 +30,8 @@ public class Simulator {
 
 		/* init virtual time */
 
-		vt = 0;
+		/* virtual time */
+		double vt = 0;
 		dt = 0.001;
 
 		long iter = 0;
@@ -44,9 +42,7 @@ public class Simulator {
 
 			/* update bodies velocity */
 
-			for (int i = 0; i < bodies.size(); i++) {
-				Body b = bodies.get(i);
-
+			for (Body b : bodies) {
 				/* compute total force on bodies */
 				V2d totalForce = computeTotalForceOnBody(b);
 
@@ -87,13 +83,12 @@ public class Simulator {
 
 		/* compute total repulsive force */
 
-		for (int j = 0; j < bodies.size(); j++) {
-			Body otherBody = bodies.get(j);
+		for (Body otherBody : bodies) {
 			if (!b.equals(otherBody)) {
 				try {
 					V2d forceByOtherBody = b.computeRepulsiveForceBy(otherBody);
 					totalForce.sum(forceByOtherBody);
-				} catch (Exception ex) {
+				} catch (Exception ignored) {
 				}
 			}
 		}
@@ -122,6 +117,10 @@ public class Simulator {
 	private void testBodySet3_some_bodies() {
 		bounds = new Boundary(-4.0, -4.0, 4.0, 4.0);
 		int nBodies = 100;
+		createBodies(nBodies);
+	}
+
+	private void createBodies(final int nBodies) {
 		Random rand = new Random(System.currentTimeMillis());
 		bodies = new ArrayList<Body>();
 		for (int i = 0; i < nBodies; i++) {
@@ -135,16 +134,7 @@ public class Simulator {
 	private void testBodySet4_many_bodies() {
 		bounds = new Boundary(-6.0, -6.0, 6.0, 6.0);
 		int nBodies = 1000;
-		Random rand = new Random(System.currentTimeMillis());
-		bodies = new ArrayList<Body>();
-		for (int i = 0; i < nBodies; i++) {
-			double x = bounds.getX0()*0.25 + rand.nextDouble() * (bounds.getX1() - bounds.getX0()) * 0.25;
-			double y = bounds.getY0()*0.25 + rand.nextDouble() * (bounds.getY1() - bounds.getY0()) * 0.25;
-			Body b = new Body(i, new P2d(x, y), new V2d(0, 0), 10);
-			bodies.add(b);
-		}
+		createBodies(nBodies);
 	}
-	
-	
 
 }

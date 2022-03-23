@@ -1,9 +1,6 @@
 package concurrent.controller;
 
-import concurrent.model.Body;
-import concurrent.model.Boundary;
-import concurrent.model.P2d;
-import concurrent.model.V2d;
+import concurrent.model.*;
 import concurrent.view.SimulationView;
 
 import java.util.*;
@@ -134,12 +131,15 @@ public class Simulator {
 			double y = bounds.getY0()*0.25 + rand.nextDouble() * (bounds.getY1() - bounds.getY0()) * 0.25;
 			Body b = new Body(i, new P2d(x, y), new V2d(0, 0), 10);
 			bodies.add(b);
+			BodyAgent bA = new BodyAgent(b);
+			bA.start();
 		}
 	}
 
 	private void testBodySet4_many_bodies() {
 		bounds = new Boundary(-6.0, -6.0, 6.0, 6.0);
-		int nBodies = 1000;
+		int nBodies = 50;
+//		int nBodies = 1000;
 		createBodies(nBodies);
 	}
 

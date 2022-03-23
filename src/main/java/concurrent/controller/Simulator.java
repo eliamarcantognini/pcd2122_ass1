@@ -4,6 +4,7 @@ import concurrent.model.*;
 import concurrent.view.SimulationView;
 
 import java.util.*;
+import java.util.concurrent.CyclicBarrier;
 
 public class Simulator {
 
@@ -14,6 +15,8 @@ public class Simulator {
 
 	/* boundary of the field */
 	private Boundary bounds;
+
+	private CyclicBarrier cyclicBarrier;
 
 	/* virtual time step */
 	double dt;
@@ -126,13 +129,14 @@ public class Simulator {
 	private void createBodies(final int nBodies) {
 		Random rand = new Random(System.currentTimeMillis());
 		bodies = new ArrayList<Body>();
+		this.cyclicBarrier = new CyclicBarrier(nBodies);
 		for (int i = 0; i < nBodies; i++) {
 			double x = bounds.getX0()*0.25 + rand.nextDouble() * (bounds.getX1() - bounds.getX0()) * 0.25;
 			double y = bounds.getY0()*0.25 + rand.nextDouble() * (bounds.getY1() - bounds.getY0()) * 0.25;
 			Body b = new Body(i, new P2d(x, y), new V2d(0, 0), 10);
 			bodies.add(b);
-			BodyAgent bA = new BodyAgent(b);
-			bA.start();
+			new BodyAgent(b,this.cyclicBarrier).start();
+//			bA.start();
 		}
 	}
 

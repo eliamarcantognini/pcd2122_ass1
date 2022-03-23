@@ -70,6 +70,12 @@ public class V2d  {
     public double getY() {
     	return y;
     }
-    
-    
+
+    @Override
+    public String toString() {
+        return "V2d{" +
+                "x=" + x +
+                ", y=" + y +
+                '}';
+    }
 }

@@ -129,20 +129,20 @@ public class Simulator {
 	private void createBodies(final int nBodies) {
 		Random rand = new Random(System.currentTimeMillis());
 		bodies = new ArrayList<Body>();
-		this.cyclicBarrier = new CyclicBarrier(nBodies);
+		this.cyclicBarrier = new CyclicBarrier(nBodies, () -> System.out.println("Prova CB"));
 		for (int i = 0; i < nBodies; i++) {
 			double x = bounds.getX0()*0.25 + rand.nextDouble() * (bounds.getX1() - bounds.getX0()) * 0.25;
 			double y = bounds.getY0()*0.25 + rand.nextDouble() * (bounds.getY1() - bounds.getY0()) * 0.25;
 			Body b = new Body(i, new P2d(x, y), new V2d(0, 0), 10);
 			bodies.add(b);
-			new BodyAgent(b,this.cyclicBarrier).start();
+			new BodyAgent(b,this.bodies,this.cyclicBarrier).start();
 //			bA.start();
 		}
 	}
 
 	private void testBodySet4_many_bodies() {
 		bounds = new Boundary(-6.0, -6.0, 6.0, 6.0);
-		int nBodies = 50;
+		int nBodies = 8;
 //		int nBodies = 1000;
 		createBodies(nBodies);
 	}

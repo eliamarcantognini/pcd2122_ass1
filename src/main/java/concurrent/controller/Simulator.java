@@ -1,4 +1,10 @@
-package seq;
+package concurrent.controller;
+
+import concurrent.model.Body;
+import concurrent.model.Boundary;
+import concurrent.model.P2d;
+import concurrent.model.V2d;
+import concurrent.view.SimulationView;
 
 import java.util.*;
 

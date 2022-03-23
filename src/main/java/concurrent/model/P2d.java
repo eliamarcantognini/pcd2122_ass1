@@ -1,6 +1,6 @@
-package seq;
+package concurrent.model;
 
-public class P2d { 
+public class P2d {
 
     private double x, y;
 

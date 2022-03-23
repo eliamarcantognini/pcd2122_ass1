@@ -1,4 +1,8 @@
-package seq;
+package concurrent.view;
+
+import concurrent.model.Body;
+import concurrent.model.Boundary;
+import concurrent.model.P2d;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;

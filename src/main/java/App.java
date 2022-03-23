@@ -1,11 +1,12 @@
-package seq;
+import concurrent.controller.Simulator;
+import concurrent.view.SimulationView;
 
 /**
  * Bodies simulation - legacy code: sequential, unstructured
  * 
  * @author aricci
  */
-public class SequentialBodySimulationMain {
+public class App {
 
     public static void main(String[] args) {
                 

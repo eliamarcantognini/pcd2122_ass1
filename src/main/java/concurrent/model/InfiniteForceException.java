@@ -1,4 +1,4 @@
-package seq;
+package concurrent.model;
 
 public class InfiniteForceException extends Exception {
 

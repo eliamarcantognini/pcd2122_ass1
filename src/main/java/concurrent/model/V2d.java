@@ -7,7 +7,7 @@
  * Use is subject to license terms.
  *
  */
-package seq;
+package concurrent.model;
 
 /**
  *

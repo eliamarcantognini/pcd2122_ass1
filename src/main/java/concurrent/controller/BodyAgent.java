@@ -25,7 +25,7 @@ public class BodyAgent extends Thread{
 
     @Override
     public void run() {
-        while (true){
+        while (Simulator.keepWorking) {
             /* compute total force on bodies */
             V2d totalForce = computeTotalForceOnBody();
 

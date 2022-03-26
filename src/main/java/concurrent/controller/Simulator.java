@@ -10,6 +10,7 @@ public class Simulator {
 
 	public final static double DT = 0.001;
 	public final static Boundary BOUNDS = new Boundary(-6.0, -6.0, 6.0, 6.0);
+	public static boolean keepWorking = true;
 
 	private final SimulationView viewer;
 
@@ -19,22 +20,37 @@ public class Simulator {
 	/* boundary of the field */
 	private Boundary bounds;
 
-	private CyclicBarrier cyclicBarrier;
+	private final CyclicBarrier cyclicBarrier;
 
 	private SyncList monitorList;
 
-	/* virtual time step */
-	double dt;
+	private double vt;
+	private long iter;
 
 	public Simulator(SimulationView viewer) {
 		this.viewer = viewer;
 
-		/* initializing boundary and bodies */
+		int nBodies = 10;
 
-		// testBodySet1_two_bodies();
-		// testBodySet2_three_bodies();
-		// testBodySet3_some_bodies();
-		testBodySet4_many_bodies();
+		readBodies = new ArrayList<>();
+
+		this.cyclicBarrier = new CyclicBarrier(nBodies, () -> {
+			this.readBodies = monitorList.getBodies();
+			monitorList.reset();
+
+			/* update virtual time */
+
+			vt = vt + DT;
+			iter++;
+
+			/* display current stage */
+
+			viewer.display((ArrayList<Body>) readBodies, vt, iter, BOUNDS);
+		});
+
+		this.monitorList = new SyncList();
+
+		createBodies(nBodies);
 	}
 	
 	public void execute(long nSteps) {
@@ -42,72 +58,13 @@ public class Simulator {
 		/* init virtual time */
 
 		/* virtual time */
-		double vt = 0;
-		dt = 0.001;
+		this.vt = 0;
 
-		long iter = 0;
+		this.iter = 0;
 
-		/* simulation loop */
-
-		while (iter < nSteps) {
-
-			/* update bodies velocity */
-
-			for (Body b : readBodies) {
-				/* compute total force on bodies */
-				V2d totalForce = computeTotalForceOnBody(b);
-
-				/* compute instant acceleration */
-				V2d acc = new V2d(totalForce).scalarMul(1.0 / b.getMass());
-
-				/* update velocity */
-				b.updateVelocity(acc, dt);
-			}
-
-			/* compute bodies new pos */
-
-			for (Body b : readBodies) {
-				b.updatePos(dt);
-			}
-
-			/* check collisions with boundaries */
-
-			for (Body b : readBodies) {
-				b.checkAndSolveBoundaryCollision(bounds);
-			}
-
-			/* update virtual time */
-
-			vt = vt + dt;
-			iter++;
-
-			/* display current stage */
-
-			viewer.display((ArrayList<Body>) readBodies, vt, iter, bounds);
-
+		for (Body b: readBodies) {
+			new BodyAgent(b, this.readBodies, this.cyclicBarrier, this.monitorList).start();
 		}
-	}
-
-	private V2d computeTotalForceOnBody(Body b) {
-
-		V2d totalForce = new V2d(0, 0);
-
-		/* compute total repulsive force */
-
-		for (Body otherBody : readBodies) {
-			if (!b.equals(otherBody)) {
-				try {
-					V2d forceByOtherBody = b.computeRepulsiveForceBy(otherBody);
-					totalForce.sum(forceByOtherBody);
-				} catch (Exception ignored) {
-				}
-			}
-		}
-
-		/* add friction force */
-		totalForce.sum(b.getCurrentFrictionForce());
-
-		return totalForce;
 	}
 	
 	private void testBodySet1_two_bodies() {
@@ -133,19 +90,11 @@ public class Simulator {
 
 	private void createBodies(final int nBodies) {
 		Random rand = new Random(System.currentTimeMillis());
-		readBodies = new ArrayList<Body>();
-		this.cyclicBarrier = new CyclicBarrier(nBodies, () -> {
-			this.readBodies = monitorList.getBodies();
-			monitorList.reset();
-		});
-		this.monitorList = new SyncList();
 		for (int i = 0; i < nBodies; i++) {
-			double x = bounds.getX0()*0.25 + rand.nextDouble() * (bounds.getX1() - bounds.getX0()) * 0.25;
-			double y = bounds.getY0()*0.25 + rand.nextDouble() * (bounds.getY1() - bounds.getY0()) * 0.25;
+			double x = BOUNDS.getX0()*0.25 + rand.nextDouble() * (BOUNDS.getX1() - BOUNDS.getX0()) * 0.25;
+			double y = BOUNDS.getY0()*0.25 + rand.nextDouble() * (BOUNDS.getY1() - BOUNDS.getY0()) * 0.25;
 			Body b = new Body(i, new P2d(x, y), new V2d(0, 0), 10);
 			readBodies.add(new Body(b));
-			new BodyAgent(b, this.readBodies, this.cyclicBarrier, this.monitorList).start();
-//			bA.start();
 		}
 	}
 

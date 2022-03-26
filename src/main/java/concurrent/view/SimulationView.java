@@ -20,7 +20,7 @@ import javax.swing.*;
  * @author aricci
  *
  */
-public class SimulationView {
+public class SimulationView implements View {
         
 	private final VisualiserFrame frame;
 	
@@ -34,7 +34,8 @@ public class SimulationView {
     	frame = new VisualiserFrame(w,h);
     }
         
-    public void display(ArrayList<Body> bodies, double vt, long iter, Boundary bounds){
+    @Override
+	public void display(ArrayList<Body> bodies, double vt, long iter, Boundary bounds){
  	   frame.display(bodies, vt, iter, bounds); 
     }
     

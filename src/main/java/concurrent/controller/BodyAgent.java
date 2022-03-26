@@ -1,6 +1,7 @@
 package concurrent.controller;
 
 import concurrent.model.Body;
+import concurrent.model.SyncList;
 
 import java.util.List;
 import java.util.concurrent.BrokenBarrierException;
@@ -10,12 +11,14 @@ public class BodyAgent extends Thread{
     private final Body body;
     private final CyclicBarrier cyclicBarrier;
     private final List<Body> bodies;
+    private final SyncList monitorList;
 
 
-    public BodyAgent(final Body body, final List<Body> bodies, final CyclicBarrier cyclicBarrier){
+    public BodyAgent(final Body body, final List<Body> bodies, final CyclicBarrier cyclicBarrier, final SyncList monitorList){
         this.body = body;
         this.cyclicBarrier = cyclicBarrier;
         this.bodies = bodies;
+        this.monitorList = monitorList;
     }
 
     @Override

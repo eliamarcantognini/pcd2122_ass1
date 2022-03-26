@@ -11,12 +11,14 @@ public class Simulator {
 	private final SimulationView viewer;
 
 	/* bodies in the field */
-	ArrayList<Body> readBodies;
+	List<Body> readBodies;
 
 	/* boundary of the field */
 	private Boundary bounds;
 
 	private CyclicBarrier cyclicBarrier;
+
+	private SyncList monitorList;
 
 	/* virtual time step */
 	double dt;
@@ -78,7 +80,7 @@ public class Simulator {
 
 			/* display current stage */
 
-			viewer.display(readBodies, vt, iter, bounds);
+			viewer.display((ArrayList<Body>) readBodies, vt, iter, bounds);
 
 		}
 	}
@@ -129,13 +131,17 @@ public class Simulator {
 	private void createBodies(final int nBodies) {
 		Random rand = new Random(System.currentTimeMillis());
 		readBodies = new ArrayList<Body>();
-		this.cyclicBarrier = new CyclicBarrier(nBodies, () -> System.out.println("Prova CB"));
+		this.cyclicBarrier = new CyclicBarrier(nBodies, () -> {
+			this.readBodies = monitorList.getBodies();
+			monitorList.reset();
+		});
+		this.monitorList = new SyncList();
 		for (int i = 0; i < nBodies; i++) {
 			double x = bounds.getX0()*0.25 + rand.nextDouble() * (bounds.getX1() - bounds.getX0()) * 0.25;
 			double y = bounds.getY0()*0.25 + rand.nextDouble() * (bounds.getY1() - bounds.getY0()) * 0.25;
 			Body b = new Body(i, new P2d(x, y), new V2d(0, 0), 10);
 			readBodies.add(b);
-			new BodyAgent(b,this.readBodies,this.cyclicBarrier).start();
+			new BodyAgent(b,this.readBodies,this.cyclicBarrier, this.monitorList).start();
 //			bA.start();
 		}
 	}

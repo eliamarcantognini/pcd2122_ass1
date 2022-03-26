@@ -3,6 +3,7 @@ package concurrent.controller;
 import concurrent.model.Body;
 import concurrent.model.P2d;
 import concurrent.model.SyncList;
+import concurrent.model.V2d;
 
 import java.util.List;
 import java.util.concurrent.BrokenBarrierException;
@@ -25,20 +26,49 @@ public class BodyAgent extends Thread{
     @Override
     public void run() {
         while (true){
-//            System.out.println("Thread of: " + this.body.getId() + " this is my list: " + this.bodies);
-//            System.out.println("Thread of: " + this.body.getId() + " updating the monitor list");
-            monitorList.updateBody(new Body(body.getId(), this.body.getPos().sum(this.body.getVel()), this.body.getVel(), this.body.getMass()));
-//            System.out.println("Thread of: " + this.body.getId() + " updated the monitor list");
+            /* compute total force on bodies */
+            V2d totalForce = computeTotalForceOnBody();
+
+            /* compute instant acceleration */
+            V2d acc = new V2d(totalForce).scalarMul(1.0 / this.body.getMass());
+
+            /* update velocity */
+            this.body.updateVelocity(acc, Simulator.DT);
+
+            this.body.updatePos(Simulator.DT);
+
+            this.body.checkAndSolveBoundaryCollision(Simulator.BOUNDS);
+
+            monitorList.updateBody(new Body(this.body));
+
             try {
-//                System.out.println("Thread of: " + this.body.getId() + "I'm crushing into the barrier");
                 this.cyclicBarrier.await();
             } catch (Exception e) {
                 System.out.println("Aiha?");
                 System.exit(-1);
             }
-            //System.out.println(this.bodies.toString());
-//            System.out.println("Thread of: " + this.body.getId() + " checking list IF it's updated");
-//            System.out.println("Thread of: " + this.body.getId() + " this is my NEW(?) list: " + this.bodies);
         }
+    }
+
+    private V2d computeTotalForceOnBody() {
+
+        V2d totalForce = new V2d(0, 0);
+
+        /* compute total repulsive force */
+
+        for (Body otherBody : this.bodies) {
+            if (!this.body.equals(otherBody)) {
+                try {
+                    V2d forceByOtherBody = this.body.computeRepulsiveForceBy(otherBody);
+                    totalForce.sum(forceByOtherBody);
+                } catch (Exception ignored) {
+                }
+            }
+        }
+
+        /* add friction force */
+        totalForce.sum(this.body.getCurrentFrictionForce());
+
+        return totalForce;
     }
 }

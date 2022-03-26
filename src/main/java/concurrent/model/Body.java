@@ -23,6 +23,13 @@ public class Body {
         this.mass = mass;
     }
 
+    public Body(Body b) {
+        this.id = b.getId();
+        this.pos = b.getPos();
+        this.vel = b.getVel();
+        this.mass = b.getMass();
+    }
+
     public double getMass() {
     	return mass;
     }

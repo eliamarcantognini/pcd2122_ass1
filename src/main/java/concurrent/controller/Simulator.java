@@ -8,6 +8,9 @@ import java.util.concurrent.CyclicBarrier;
 
 public class Simulator {
 
+	public final static double DT = 0.001;
+	public final static Boundary BOUNDS = new Boundary(-6.0, -6.0, 6.0, 6.0);
+
 	private final SimulationView viewer;
 
 	/* bodies in the field */
@@ -132,18 +135,16 @@ public class Simulator {
 		Random rand = new Random(System.currentTimeMillis());
 		readBodies = new ArrayList<Body>();
 		this.cyclicBarrier = new CyclicBarrier(nBodies, () -> {
-//			System.out.println("I'm barrier, awake to update the list");
 			this.readBodies = monitorList.getBodies();
 			monitorList.reset();
-//			System.out.println("I'm barrier list updated, MAYBE");
 		});
 		this.monitorList = new SyncList();
 		for (int i = 0; i < nBodies; i++) {
 			double x = bounds.getX0()*0.25 + rand.nextDouble() * (bounds.getX1() - bounds.getX0()) * 0.25;
 			double y = bounds.getY0()*0.25 + rand.nextDouble() * (bounds.getY1() - bounds.getY0()) * 0.25;
 			Body b = new Body(i, new P2d(x, y), new V2d(0, 0), 10);
-			readBodies.add(b);
-			new BodyAgent(b,this.readBodies,this.cyclicBarrier, this.monitorList).start();
+			readBodies.add(new Body(b));
+			new BodyAgent(b, this.readBodies, this.cyclicBarrier, this.monitorList).start();
 //			bA.start();
 		}
 	}

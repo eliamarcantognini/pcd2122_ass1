@@ -11,7 +11,7 @@ public class Simulator {
 	private final SimulationView viewer;
 
 	/* bodies in the field */
-	ArrayList<Body> bodies;
+	ArrayList<Body> readBodies;
 
 	/* boundary of the field */
 	private Boundary bounds;
@@ -48,7 +48,7 @@ public class Simulator {
 
 			/* update bodies velocity */
 
-			for (Body b : bodies) {
+			for (Body b : readBodies) {
 				/* compute total force on bodies */
 				V2d totalForce = computeTotalForceOnBody(b);
 
@@ -61,13 +61,13 @@ public class Simulator {
 
 			/* compute bodies new pos */
 
-			for (Body b : bodies) {
+			for (Body b : readBodies) {
 				b.updatePos(dt);
 			}
 
 			/* check collisions with boundaries */
 
-			for (Body b : bodies) {
+			for (Body b : readBodies) {
 				b.checkAndSolveBoundaryCollision(bounds);
 			}
 
@@ -78,7 +78,7 @@ public class Simulator {
 
 			/* display current stage */
 
-			viewer.display(bodies, vt, iter, bounds);
+			viewer.display(readBodies, vt, iter, bounds);
 
 		}
 	}
@@ -89,7 +89,7 @@ public class Simulator {
 
 		/* compute total repulsive force */
 
-		for (Body otherBody : bodies) {
+		for (Body otherBody : readBodies) {
 			if (!b.equals(otherBody)) {
 				try {
 					V2d forceByOtherBody = b.computeRepulsiveForceBy(otherBody);
@@ -107,17 +107,17 @@ public class Simulator {
 	
 	private void testBodySet1_two_bodies() {
 		bounds = new Boundary(-4.0, -4.0, 4.0, 4.0);
-		bodies = new ArrayList<Body>();
-		bodies.add(new Body(0, new P2d(-0.1, 0), new V2d(0,0), 1));
-		bodies.add(new Body(1, new P2d(0.1, 0), new V2d(0,0), 2));		
+		readBodies = new ArrayList<Body>();
+		readBodies.add(new Body(0, new P2d(-0.1, 0), new V2d(0,0), 1));
+		readBodies.add(new Body(1, new P2d(0.1, 0), new V2d(0,0), 2));
 	}
 
 	private void testBodySet2_three_bodies() {
 		bounds = new Boundary(-1.0, -1.0, 1.0, 1.0);
-		bodies = new ArrayList<Body>();
-		bodies.add(new Body(0, new P2d(0, 0), new V2d(0,0), 10));
-		bodies.add(new Body(1, new P2d(0.2, 0), new V2d(0,0), 1));		
-		bodies.add(new Body(2, new P2d(-0.2, 0), new V2d(0,0), 1));		
+		readBodies = new ArrayList<Body>();
+		readBodies.add(new Body(0, new P2d(0, 0), new V2d(0,0), 10));
+		readBodies.add(new Body(1, new P2d(0.2, 0), new V2d(0,0), 1));
+		readBodies.add(new Body(2, new P2d(-0.2, 0), new V2d(0,0), 1));
 	}
 
 	private void testBodySet3_some_bodies() {
@@ -128,14 +128,14 @@ public class Simulator {
 
 	private void createBodies(final int nBodies) {
 		Random rand = new Random(System.currentTimeMillis());
-		bodies = new ArrayList<Body>();
+		readBodies = new ArrayList<Body>();
 		this.cyclicBarrier = new CyclicBarrier(nBodies, () -> System.out.println("Prova CB"));
 		for (int i = 0; i < nBodies; i++) {
 			double x = bounds.getX0()*0.25 + rand.nextDouble() * (bounds.getX1() - bounds.getX0()) * 0.25;
 			double y = bounds.getY0()*0.25 + rand.nextDouble() * (bounds.getY1() - bounds.getY0()) * 0.25;
 			Body b = new Body(i, new P2d(x, y), new V2d(0, 0), 10);
-			bodies.add(b);
-			new BodyAgent(b,this.bodies,this.cyclicBarrier).start();
+			readBodies.add(b);
+			new BodyAgent(b,this.readBodies,this.cyclicBarrier).start();
 //			bA.start();
 		}
 	}

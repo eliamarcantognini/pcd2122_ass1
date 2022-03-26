@@ -132,8 +132,10 @@ public class Simulator {
 		Random rand = new Random(System.currentTimeMillis());
 		readBodies = new ArrayList<Body>();
 		this.cyclicBarrier = new CyclicBarrier(nBodies, () -> {
+//			System.out.println("I'm barrier, awake to update the list");
 			this.readBodies = monitorList.getBodies();
 			monitorList.reset();
+//			System.out.println("I'm barrier list updated, MAYBE");
 		});
 		this.monitorList = new SyncList();
 		for (int i = 0; i < nBodies; i++) {
@@ -148,7 +150,7 @@ public class Simulator {
 
 	private void testBodySet4_many_bodies() {
 		bounds = new Boundary(-6.0, -6.0, 6.0, 6.0);
-		int nBodies = 8;
+		int nBodies = 3;
 //		int nBodies = 1000;
 		createBodies(nBodies);
 	}

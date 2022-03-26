@@ -1,6 +1,7 @@
 package concurrent.controller;
 
 import concurrent.model.Body;
+import concurrent.model.P2d;
 import concurrent.model.SyncList;
 
 import java.util.List;
@@ -23,17 +24,21 @@ public class BodyAgent extends Thread{
 
     @Override
     public void run() {
-        for (int i = 0; i<2; i++) {
-            System.out.println("Thread of: " + this.body.getId() + " BBBBB wait...");
+        while (true){
+//            System.out.println("Thread of: " + this.body.getId() + " this is my list: " + this.bodies);
+//            System.out.println("Thread of: " + this.body.getId() + " updating the monitor list");
+            monitorList.updateBody(new Body(body.getId(), this.body.getPos().sum(this.body.getVel()), this.body.getVel(), this.body.getMass()));
+//            System.out.println("Thread of: " + this.body.getId() + " updated the monitor list");
             try {
+//                System.out.println("Thread of: " + this.body.getId() + "I'm crushing into the barrier");
                 this.cyclicBarrier.await();
             } catch (Exception e) {
                 System.out.println("Aiha?");
                 System.exit(-1);
             }
-
             //System.out.println(this.bodies.toString());
-            System.out.println("Thread of: " + this.body.getId() + " AA wait...");
+//            System.out.println("Thread of: " + this.body.getId() + " checking list IF it's updated");
+//            System.out.println("Thread of: " + this.body.getId() + " this is my NEW(?) list: " + this.bodies);
         }
     }
 }

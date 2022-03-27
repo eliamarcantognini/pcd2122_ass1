@@ -2,6 +2,7 @@ package concurrent.controller;
 
 import concurrent.model.*;
 import concurrent.view.SimulationView;
+import concurrent.view.View;
 
 import java.util.*;
 import java.util.concurrent.CyclicBarrier;
@@ -12,13 +13,14 @@ public class Simulator {
 	public final static Boundary BOUNDS = new Boundary(-6.0, -6.0, 6.0, 6.0);
 	public static boolean keepWorking = true;
 
-	private final SimulationView viewer;
+	private final View viewer;
 
 	/* bodies in the field */
 	List<Body> readBodies;
 
 	/* boundary of the field */
 	private Boundary bounds;
+	private long nSteps;
 
 	private final CyclicBarrier cyclicBarrier;
 
@@ -27,7 +29,7 @@ public class Simulator {
 	private double vt;
 	private long iter;
 
-	public Simulator(SimulationView viewer) {
+	public Simulator(View viewer) {
 		this.viewer = viewer;
 
 		int nBodies = 10;
@@ -46,6 +48,8 @@ public class Simulator {
 			/* display current stage */
 
 			viewer.display((ArrayList<Body>) readBodies, vt, iter, BOUNDS);
+			if (iter > nSteps)
+				keepWorking = false;
 		});
 
 		this.monitorList = new SyncList();
@@ -54,6 +58,8 @@ public class Simulator {
 	}
 	
 	public void execute(long nSteps) {
+
+		this.nSteps = nSteps;
 
 		/* init virtual time */
 

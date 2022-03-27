@@ -1,3 +1,5 @@
+@using jpf-inspector
+shell=.shell.basicshell.BasicShell
 +classpath=build/classes/java/main/
 target=App
 listener=gov.nasa.jpf.listener.PreciseRaceDetector

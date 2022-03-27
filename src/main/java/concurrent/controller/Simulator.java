@@ -20,7 +20,7 @@ public class Simulator {
 
 	/* boundary of the field */
 	private Boundary bounds;
-	private long nSteps;
+	private final long nSteps = 50000;
 
 	private final CyclicBarrier cyclicBarrier;
 
@@ -59,7 +59,7 @@ public class Simulator {
 	
 	public void execute(long nSteps) {
 
-		this.nSteps = nSteps;
+//		this.nSteps = nSteps;
 
 		/* init virtual time */
 

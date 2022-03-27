@@ -14,6 +14,6 @@ public class App {
 //    	SimulationView viewer = new SimulationView(620,620);
         PrinterView viewer = new PrinterView();
     	Simulator sim = new Simulator(viewer);
-        sim.execute(500000);
+        sim.execute(50000);
     }
 }

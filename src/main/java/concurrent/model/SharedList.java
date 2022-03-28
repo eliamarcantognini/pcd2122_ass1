@@ -6,7 +6,7 @@ import java.util.List;
 
 public class SharedList {
 
-    private List<Body> updatedBodies;
+    private final List<Body> updatedBodies;
 
     public SharedList() {
         updatedBodies = new ArrayList<>();
@@ -15,10 +15,6 @@ public class SharedList {
     public List<Body> getBodies() {
         return updatedBodies;
     }
-
-//    public void reset() {
-//        updatedBodies = new ArrayList<>();
-//    }
 
     public void updateBody(Body body) {
         updatedBodies.set(body.getId(), body);

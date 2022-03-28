@@ -8,6 +8,6 @@ import java.util.ArrayList;
 public class PrinterView implements View{
     @Override
     public void display(ArrayList<Body> bodies, double vt, long iter, Boundary bounds) {
-        System.out.println(iter);
+        System.out.println(bodies.toString());
     }
 }

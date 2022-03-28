@@ -1,7 +1,6 @@
 package concurrent.controller;
 
 import concurrent.model.*;
-import concurrent.view.SimulationView;
 import concurrent.view.View;
 
 import java.util.*;
@@ -24,7 +23,7 @@ public class Simulator {
 
 	private final CyclicBarrier cyclicBarrier;
 
-	private SyncList monitorList;
+	private SharedList sharedList;
 
 	private double vt;
 	private long iter;
@@ -37,8 +36,8 @@ public class Simulator {
 		readBodies = new ArrayList<>();
 
 		this.cyclicBarrier = new CyclicBarrier(nBodies, () -> {
-			this.readBodies = monitorList.getBodies();
-			monitorList.reset();
+			this.readBodies = sharedList.getBodies();
+//			monitorList.reset();
 
 			/* update virtual time */
 
@@ -48,11 +47,11 @@ public class Simulator {
 			/* display current stage */
 
 			viewer.display((ArrayList<Body>) readBodies, vt, iter, BOUNDS);
-			if (iter > nSteps)
+			if (iter >= nSteps)
 				keepWorking = false;
 		});
 
-		this.monitorList = new SyncList();
+		this.sharedList = new SharedList();
 
 		createBodies(nBodies);
 	}
@@ -69,7 +68,7 @@ public class Simulator {
 		this.iter = 0;
 
 		for (Body b: readBodies) {
-			new BodyAgent(b, this.readBodies, this.cyclicBarrier, this.monitorList).start();
+			new BodyAgent(b, this.readBodies, this.cyclicBarrier, this.sharedList).start();
 		}
 	}
 	
@@ -102,6 +101,7 @@ public class Simulator {
 			Body b = new Body(i, new P2d(x, y), new V2d(0, 0), 10);
 			readBodies.add(new Body(b));
 		}
+		sharedList.addBodies(readBodies);
 	}
 
 	private void testBodySet4_many_bodies() {

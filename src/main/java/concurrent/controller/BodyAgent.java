@@ -1,26 +1,24 @@
 package concurrent.controller;
 
 import concurrent.model.Body;
-import concurrent.model.P2d;
-import concurrent.model.SyncList;
+import concurrent.model.SharedList;
 import concurrent.model.V2d;
 
 import java.util.List;
-import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 
 public class BodyAgent extends Thread{
     private final Body body;
     private final CyclicBarrier cyclicBarrier;
     private final List<Body> bodies;
-    private final SyncList monitorList;
+    private final SharedList sharedList;
 
 
-    public BodyAgent(final Body body, final List<Body> bodies, final CyclicBarrier cyclicBarrier, final SyncList monitorList){
+    public BodyAgent(final Body body, final List<Body> bodies, final CyclicBarrier cyclicBarrier, final SharedList sharedList){
         this.body = body;
         this.cyclicBarrier = cyclicBarrier;
         this.bodies = bodies;
-        this.monitorList = monitorList;
+        this.sharedList = sharedList;
     }
 
     @Override
@@ -39,7 +37,7 @@ public class BodyAgent extends Thread{
 
             this.body.checkAndSolveBoundaryCollision(Simulator.BOUNDS);
 
-            monitorList.updateBody(new Body(this.body));
+            sharedList.updateBody(new Body(this.body));
 
             try {
                 this.cyclicBarrier.await();

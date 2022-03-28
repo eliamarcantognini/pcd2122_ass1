@@ -9,57 +9,65 @@ import java.util.List;
 import java.util.concurrent.CyclicBarrier;
 
 public class BodyAgent extends Thread{
-    private final Body body;
+    private final List<Body> bodiesToCompute;
     private final CyclicBarrier cyclicBarrier;
-    private final List<Body> bodies;
+    private final List<Body> allBodies;
     private final SharedList sharedList;
     private final Context context;
+    private int iteration;
 
-    public BodyAgent(final Body body, final List<Body> bodies, final CyclicBarrier cyclicBarrier, final SharedList sharedList, final Context context){
-        this.body = body;
+    public BodyAgent(final List<Body> body, final List<Body> bodies, final CyclicBarrier cyclicBarrier, final SharedList sharedList, final Context context){
+        this.bodiesToCompute = body;
         this.cyclicBarrier = cyclicBarrier;
-        this.bodies = bodies;
+        this.allBodies = bodies;
         this.sharedList = sharedList;
         this.context = context;
+        System.out.println("Create agent - bodies: " + this.bodiesToCompute);
     }
 
     @Override
     public void run() {
         while (this.context.isKeepWorking()) {
             /* compute total force on bodies */
-            V2d totalForce = computeTotalForceOnBody();
 
-            /* compute instant acceleration */
-            V2d acc = new V2d(totalForce).scalarMul(1.0 / this.body.getMass());
+            for (Body b : this.bodiesToCompute) {
+                System.out.println("Iterazione: " + this.iteration++);
+                V2d totalForce = computeTotalForceOnBody(b);
 
-            /* update velocity */
-            this.body.updateVelocity(acc, Context.DT);
+                /* compute instant acceleration */
+                V2d acc = new V2d(totalForce).scalarMul(1.0 / b.getMass());
 
-            this.body.updatePos(Context.DT);
+                /* update velocity */
+                b.updateVelocity(acc, Context.DT);
 
-            this.body.checkAndSolveBoundaryCollision(context.getBoundary());
+                b.updatePos(Context.DT);
 
-            sharedList.updateBody(new Body(this.body));
+                b.checkAndSolveBoundaryCollision(context.getBoundary());
+
+                sharedList.updateBody(new Body(b));
+            }
 
             try {
                 this.cyclicBarrier.await();
             } catch (Exception e) {
-                System.out.println("Thread of body" + this.body.getId() + ": Await failed");
+                System.out.println("Thread of bodies" + this.bodiesToCompute.get(0).getId() + ": Await failed");
                 System.exit(-1);
             }
         }
     }
 
-    private V2d computeTotalForceOnBody() {
+
+
+    private V2d computeTotalForceOnBody(Body body) {
 
         V2d totalForce = new V2d(0, 0);
 
         /* compute total repulsive force */
 
-        for (Body otherBody : this.bodies) {
-            if (!this.body.equals(otherBody)) {
+        for (Body otherBody : this.allBodies) {
+            if (!body.equals(otherBody)) {
                 try {
-                    V2d forceByOtherBody = this.body.computeRepulsiveForceBy(otherBody);
+                    V2d forceByOtherBody = body.computeRepulsiveForceBy(otherBody);
                     totalForce.sum(forceByOtherBody);
                 } catch (Exception ignored) {
                 }
@@ -67,7 +75,7 @@ public class BodyAgent extends Thread{
         }
 
         /* add friction force */
-        totalForce.sum(this.body.getCurrentFrictionForce());
+        totalForce.sum(body.getCurrentFrictionForce());
 
         return totalForce;
     }

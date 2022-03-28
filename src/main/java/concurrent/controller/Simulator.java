@@ -24,12 +24,13 @@ public class Simulator {
 
 	private double vt;
 	private long iter;
+	private int nBodies;
 
 	public Simulator(View viewer) {
 
 		this.context = new Context();
 		this.viewer = viewer;
-		int nBodies = 10;
+		this.nBodies = 100;
 		readBodies = new ArrayList<>();
 
 		this.cyclicBarrier = new CyclicBarrier(nBodies, () -> {
@@ -63,9 +64,19 @@ public class Simulator {
 
 		this.iter = 0;
 
-		for (Body b: readBodies) {
-			new BodyAgent(b, this.readBodies, this.cyclicBarrier, this.sharedList, this.context).start();
+		int processors = Runtime.getRuntime().availableProcessors();
+		int bodiesForProcessor = nBodies/processors;
+		for(int i = 0; i < processors-1; i++){
+			new BodyAgent(this.readBodies.
+					subList(i*bodiesForProcessor,i*bodiesForProcessor+bodiesForProcessor-1),
+						this.readBodies, this.cyclicBarrier, this.sharedList, this.context)
+					.start();
 		}
+		new BodyAgent(this.readBodies.
+				subList(bodiesForProcessor*(processors-1),this.readBodies.size()-1),
+				this.readBodies, this.cyclicBarrier, this.sharedList, this.context)
+				.start();
+
 	}
 
 	private void createBodies(final int nBodies) {

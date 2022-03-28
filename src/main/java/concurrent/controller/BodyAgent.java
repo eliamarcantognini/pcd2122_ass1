@@ -22,7 +22,7 @@ public class BodyAgent extends Thread{
         this.allBodies = bodies;
         this.sharedList = sharedList;
         this.context = context;
-        System.out.println("Create agent - bodies: " + this.bodiesToCompute);
+        System.out.println(super.getName() + "] Create agent - bodies: " + this.bodiesToCompute);
     }
 
     @Override
@@ -31,7 +31,7 @@ public class BodyAgent extends Thread{
             /* compute total force on bodies */
 
             for (Body b : this.bodiesToCompute) {
-                System.out.println("Iterazione: " + this.iteration++);
+                System.out.println(super.getName()+ "] Iterazione: " + this.iteration++);
                 V2d totalForce = computeTotalForceOnBody(b);
 
                 /* compute instant acceleration */

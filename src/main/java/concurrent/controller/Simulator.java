@@ -11,6 +11,7 @@ public class Simulator {
 	private final Context context;
 
 	private final View viewer;
+	private final int cores;
 
 	/* bodies in the field */
 	List<Body> readBodies;
@@ -24,16 +25,17 @@ public class Simulator {
 
 	private double vt;
 	private long iter;
-	private int nBodies;
+	private final int nBodies;
 
 	public Simulator(View viewer) {
 
 		this.context = new Context();
 		this.viewer = viewer;
 		this.nBodies = 100;
+		this.cores = Runtime.getRuntime().availableProcessors();
 		readBodies = new ArrayList<>();
 
-		this.cyclicBarrier = new CyclicBarrier(nBodies, () -> {
+		this.cyclicBarrier = new CyclicBarrier(this.cores, () -> {
 			this.readBodies = sharedList.getBodies();
 
 			/* update virtual time */
@@ -64,16 +66,15 @@ public class Simulator {
 
 		this.iter = 0;
 
-		int processors = Runtime.getRuntime().availableProcessors();
-		int bodiesForProcessor = nBodies/processors;
-		for(int i = 0; i < processors-1; i++){
+		int bodiesPerCore = nBodies / cores;
+		for(int i = 0; i < cores -1; i++){
 			new BodyAgent(this.readBodies.
-					subList(i*bodiesForProcessor,i*bodiesForProcessor+bodiesForProcessor-1),
+					subList(i*bodiesPerCore,i*bodiesPerCore+bodiesPerCore-1),
 						this.readBodies, this.cyclicBarrier, this.sharedList, this.context)
 					.start();
 		}
 		new BodyAgent(this.readBodies.
-				subList(bodiesForProcessor*(processors-1),this.readBodies.size()-1),
+				subList(bodiesPerCore*(cores -1),this.readBodies.size()-1),
 				this.readBodies, this.cyclicBarrier, this.sharedList, this.context)
 				.start();
 

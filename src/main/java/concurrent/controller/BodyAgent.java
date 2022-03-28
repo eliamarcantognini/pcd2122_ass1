@@ -9,15 +9,18 @@ import java.util.List;
 import java.util.concurrent.CyclicBarrier;
 
 public class BodyAgent extends Thread{
-    private final List<Body> bodiesToCompute;
+    private final int startIndex;
+    private final int endIndex;
     private final CyclicBarrier cyclicBarrier;
     private final List<Body> allBodies;
     private final SharedList sharedList;
     private final Context context;
+    private List<Body> bodiesToCompute;
     private int iteration;
 
-    public BodyAgent(final List<Body> body, final List<Body> bodies, final CyclicBarrier cyclicBarrier, final SharedList sharedList, final Context context){
-        this.bodiesToCompute = body;
+    public BodyAgent(int startIndex, int endIndex, final List<Body> bodies, final CyclicBarrier cyclicBarrier, final SharedList sharedList, final Context context){
+        this.startIndex = startIndex;
+        this.endIndex = endIndex;
         this.cyclicBarrier = cyclicBarrier;
         this.allBodies = bodies;
         this.sharedList = sharedList;
@@ -28,22 +31,18 @@ public class BodyAgent extends Thread{
     @Override
     public void run() {
         while (this.context.isKeepWorking()) {
-            /* compute total force on bodies */
+
+            this.bodiesToCompute = allBodies.subList(this.startIndex, this.endIndex);
 
             for (Body b : this.bodiesToCompute) {
-                System.out.println(super.getName()+ "] Iterazione: " + this.iteration++);
+                /* compute total force on bodies */
                 V2d totalForce = computeTotalForceOnBody(b);
-
                 /* compute instant acceleration */
                 V2d acc = new V2d(totalForce).scalarMul(1.0 / b.getMass());
-
                 /* update velocity */
                 b.updateVelocity(acc, Context.DT);
-
                 b.updatePos(Context.DT);
-
                 b.checkAndSolveBoundaryCollision(context.getBoundary());
-
                 sharedList.updateBody(new Body(b));
             }
 
@@ -59,11 +58,8 @@ public class BodyAgent extends Thread{
 
 
     private V2d computeTotalForceOnBody(Body body) {
-
         V2d totalForce = new V2d(0, 0);
-
         /* compute total repulsive force */
-
         for (Body otherBody : this.allBodies) {
             if (!body.equals(otherBody)) {
                 try {
@@ -73,7 +69,6 @@ public class BodyAgent extends Thread{
                 }
             }
         }
-
         /* add friction force */
         totalForce.sum(body.getCurrentFrictionForce());
 

@@ -8,9 +8,7 @@ import java.util.concurrent.CyclicBarrier;
 
 public class Simulator {
 
-	public final static double DT = 0.001;
-	public final static Boundary BOUNDS = new Boundary(-6.0, -6.0, 6.0, 6.0);
-	public static boolean keepWorking = true;
+	private final Context context;
 
 	private final View viewer;
 
@@ -28,10 +26,10 @@ public class Simulator {
 	private long iter;
 
 	public Simulator(View viewer) {
+
+		this.context = new Context();
 		this.viewer = viewer;
-
 		int nBodies = 10;
-
 		readBodies = new ArrayList<>();
 
 		this.cyclicBarrier = new CyclicBarrier(nBodies, () -> {
@@ -39,14 +37,14 @@ public class Simulator {
 
 			/* update virtual time */
 
-			vt = vt + DT;
+			vt = vt + Context.DT;
 			iter++;
 
 			/* display current stage */
 
-			viewer.display((ArrayList<Body>) readBodies, vt, iter, BOUNDS);
+			viewer.display((ArrayList<Body>) readBodies, vt, iter, context.getBoundary());
 			if (iter >= nSteps)
-				keepWorking = false;
+				context.setKeepWorking(false);
 		});
 
 		this.sharedList = new SharedList();
@@ -66,15 +64,15 @@ public class Simulator {
 		this.iter = 0;
 
 		for (Body b: readBodies) {
-			new BodyAgent(b, this.readBodies, this.cyclicBarrier, this.sharedList).start();
+			new BodyAgent(b, this.readBodies, this.cyclicBarrier, this.sharedList, this.context).start();
 		}
 	}
 
 	private void createBodies(final int nBodies) {
 		Random rand = new Random(System.currentTimeMillis());
 		for (int i = 0; i < nBodies; i++) {
-			double x = BOUNDS.getX0()*0.25 + rand.nextDouble() * (BOUNDS.getX1() - BOUNDS.getX0()) * 0.25;
-			double y = BOUNDS.getY0()*0.25 + rand.nextDouble() * (BOUNDS.getY1() - BOUNDS.getY0()) * 0.25;
+			double x = context.getBoundary().getX0()*0.25 + rand.nextDouble() * (context.getBoundary().getX1() - context.getBoundary().getX0()) * 0.25;
+			double y = context.getBoundary().getY0()*0.25 + rand.nextDouble() * (context.getBoundary().getY1() - context.getBoundary().getY0()) * 0.25;
 			Body b = new Body(i, new P2d(x, y), new V2d(0, 0), 10);
 			readBodies.add(new Body(b));
 		}

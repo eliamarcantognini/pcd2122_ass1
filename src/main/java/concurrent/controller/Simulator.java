@@ -37,14 +37,10 @@ public class Simulator {
 
 		this.cyclicBarrier = new CyclicBarrier(this.cores, () -> {
 			this.readBodies = sharedList.getBodies();
-
 			/* update virtual time */
-
 			vt = vt + Context.DT;
 			iter++;
-
 			/* display current stage */
-
 			viewer.display((ArrayList<Body>) readBodies, vt, iter, context.getBoundary());
 			if (iter >= nSteps)
 				context.setKeepWorking(false);
@@ -56,25 +52,18 @@ public class Simulator {
 	}
 	
 	public void execute(long nSteps) {
-
 		this.nSteps = nSteps;
-
-		/* init virtual time */
-
 		/* virtual time */
 		this.vt = 0;
-
 		this.iter = 0;
 
 		int bodiesPerCore = nBodies / cores;
 		for(int i = 0; i < cores -1; i++){
-			new BodyAgent(this.readBodies.
-					subList(i*bodiesPerCore,i*bodiesPerCore+bodiesPerCore-1),
+			new BodyAgent(i*bodiesPerCore, i*bodiesPerCore+bodiesPerCore-1,
 						this.readBodies, this.cyclicBarrier, this.sharedList, this.context)
 					.start();
 		}
-		new BodyAgent(this.readBodies.
-				subList(bodiesPerCore*(cores -1),this.readBodies.size()-1),
+		new BodyAgent(bodiesPerCore*(cores -1), this.readBodies.size()-1,
 				this.readBodies, this.cyclicBarrier, this.sharedList, this.context)
 				.start();
 

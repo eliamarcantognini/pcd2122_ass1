@@ -148,7 +148,8 @@ public class Body {
 
     @Override
     public String toString() {
-        return "Body{" +
+        return "Body ID: " + this.id +
+                " {" +
                 "pos=" + pos +
                 ", vel=" + vel +
                 ", mass=" + mass +

@@ -12,7 +12,6 @@ public class Simulator {
 
     private final Context context;
 
-    private final View viewer;
     private final int cores;
 
     /* bodies in the field */
@@ -32,8 +31,7 @@ public class Simulator {
     public Simulator(View viewer) {
 
         this.context = new Context();
-        this.viewer = viewer;
-        this.nBodies = 1;
+        this.nBodies = 100;
         this.cores = Runtime.getRuntime().availableProcessors();
         readBodies = new ArrayList<>();
 

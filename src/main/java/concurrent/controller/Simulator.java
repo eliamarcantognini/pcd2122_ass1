@@ -31,7 +31,7 @@ public class Simulator {
     public Simulator(View viewer) {
 
         this.context = new Context();
-        this.nBodies = 100;
+        this.nBodies = 10000;
         this.cores = Runtime.getRuntime().availableProcessors();
         readBodies = new ArrayList<>();
 
@@ -63,10 +63,11 @@ public class Simulator {
 			}
         } else {
         	int bodiesPerCore = nBodies / cores;
-            for (int i = 0; i < cores - 1; i++) {
-                createAndStartAgent(i * bodiesPerCore, i * bodiesPerCore + bodiesPerCore - 1);
+            createAndStartAgent(0, bodiesPerCore);
+            for (int i = 1; i < cores - 1; i++) {
+                createAndStartAgent(i * bodiesPerCore, i * bodiesPerCore + bodiesPerCore);
             }
-            createAndStartAgent(bodiesPerCore * (cores - 1), this.readBodies.size() - 1);
+            createAndStartAgent(bodiesPerCore * (cores - 1), this.readBodies.size());
         }
     }
 

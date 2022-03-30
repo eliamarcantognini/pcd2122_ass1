@@ -17,6 +17,7 @@ public class BodyAgent extends Thread{
     private final Context context;
 
     public BodyAgent(int startIndex, int endIndex, final List<Body> bodies, final CyclicBarrier cyclicBarrier, final SharedList sharedList, final Context context){
+        super.setName("BodyAgent" + startIndex);
         this.startIndex = startIndex;
         this.endIndex = endIndex;
         this.cyclicBarrier = cyclicBarrier;

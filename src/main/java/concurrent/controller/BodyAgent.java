@@ -15,8 +15,6 @@ public class BodyAgent extends Thread{
     private final List<Body> allBodies;
     private final SharedList sharedList;
     private final Context context;
-    private List<Body> bodiesToCompute;
-    private int iteration;
 
     public BodyAgent(int startIndex, int endIndex, final List<Body> bodies, final CyclicBarrier cyclicBarrier, final SharedList sharedList, final Context context){
         this.startIndex = startIndex;
@@ -25,16 +23,15 @@ public class BodyAgent extends Thread{
         this.allBodies = bodies;
         this.sharedList = sharedList;
         this.context = context;
-        System.out.println(super.getName() + "] Create agent - bodies: " + this.bodiesToCompute);
     }
 
     @Override
     public void run() {
         while (this.context.isKeepWorking()) {
 
-            this.bodiesToCompute = allBodies.subList(this.startIndex, this.endIndex);
+            List<Body> bodiesToCompute = allBodies.subList(this.startIndex, this.endIndex);
 
-            for (Body b : this.bodiesToCompute) {
+            for (Body b : bodiesToCompute) {
                 /* compute total force on bodies */
                 V2d totalForce = computeTotalForceOnBody(b);
                 /* compute instant acceleration */
@@ -49,7 +46,7 @@ public class BodyAgent extends Thread{
             try {
                 this.cyclicBarrier.await();
             } catch (Exception e) {
-                System.out.println("Thread of bodies" + this.bodiesToCompute.get(0).getId() + ": Await failed");
+                System.out.println("Thread of bodies" + bodiesToCompute.get(0).getId() + ": Await failed");
                 System.exit(-1);
             }
         }

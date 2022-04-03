@@ -1,3 +1,4 @@
+import concurrent.controller.GUIListener;
 import concurrent.controller.Simulator;
 import concurrent.view.gui.SimulationView;
 
@@ -13,6 +14,7 @@ public class App {
 //        PrinterView viewer = new PrinterView();
     	SimulationView viewer = new SimulationView(620,620);
     	Simulator sim = new Simulator(viewer);
+        viewer.addListener(new GUIListener(sim));
         sim.execute(50000);
     }
 }

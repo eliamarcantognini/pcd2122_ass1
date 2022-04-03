@@ -13,7 +13,16 @@ public class GUIListener implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-//        if (e.getActionCommand() == )
+        switch (e.getActionCommand()) {
+            case "start":
+                System.out.println("start!");
+                break;
+            case "stop":
+                System.out.println("stop!");
+                break;
+            default:
+                System.out.println(e);
+        }
 
     }
 

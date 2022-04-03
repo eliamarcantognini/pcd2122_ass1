@@ -29,6 +29,8 @@ public class Simulator {
     private double vt;
     private long iter;
     private final int nBodies;
+    private final View viewer;
+    private boolean stopGUI = false;
 
     public Simulator(View viewer) {
 
@@ -38,6 +40,7 @@ public class Simulator {
         this.readBodies = new ArrayList<>();
         this.agents = new ArrayList<>();
         this.sharedList = this.context.getSharedList();
+        this.viewer = viewer;
 
         this.cyclicBarrier = new CyclicBarrier(Math.min(this.nBodies, this.cores), () -> {
             this.readBodies = sharedList.getBodies();
@@ -46,8 +49,9 @@ public class Simulator {
             iter++;
             /* display current stage */
             viewer.display((ArrayList<Body>) readBodies, vt, iter, context.getBoundary());
-            if (iter >= nSteps)
+            if (iter >= nSteps || stopGUI)
                 context.setKeepWorking(false);
+
         });
 
         createBodies(nBodies);
@@ -71,7 +75,7 @@ public class Simulator {
             }
             createAgent(bodiesPerCore * (cores - 1), this.readBodies.size());
         }
-        startAgents();
+
     }
 
     private void createBodies(final int nBodies) {
@@ -97,6 +101,10 @@ public class Simulator {
 
     public void startSimulation() {
         startAgents();
+    }
+
+    public void stopSimulation() {
+        this.stopGUI = true;
     }
 
 }

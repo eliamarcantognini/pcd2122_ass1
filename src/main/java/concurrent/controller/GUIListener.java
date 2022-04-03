@@ -15,10 +15,10 @@ public class GUIListener implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         switch (e.getActionCommand()) {
             case "start":
-                System.out.println("start!");
+                simulator.startSimulation();
                 break;
             case "stop":
-                System.out.println("stop!");
+                simulator.stopSimulation();
                 break;
             default:
                 System.out.println(e);

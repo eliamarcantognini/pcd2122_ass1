@@ -66,10 +66,6 @@ public class SimulationView implements View {
                     System.exit(-1);
                 }
             });
-
-            setFocusable(true);
-            setFocusTraversalKeysEnabled(false);
-            requestFocusInWindow();
             this.addKeyListener(new KeyListener() {
                 @Override
                 public void keyTyped(KeyEvent e) {}
@@ -88,6 +84,10 @@ public class SimulationView implements View {
         }
 
         public void display(ArrayList<Body> bodies, double vt, long iter, Boundary bounds) {
+
+            setFocusable(true);
+            setFocusTraversalKeysEnabled(false);
+            requestFocusInWindow();
             try {
                 SwingUtilities.invokeAndWait(() -> {
                     panel.display(bodies, vt, iter, bounds);

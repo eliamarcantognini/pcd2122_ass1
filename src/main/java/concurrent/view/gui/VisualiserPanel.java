@@ -10,7 +10,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
 
-public class VisualiserPanel extends JPanel{
+public class VisualiserPanel extends JPanel implements KeyListener {
 
     private ArrayList<Body> bodies;
     private Boundary bounds;
@@ -26,6 +26,10 @@ public class VisualiserPanel extends JPanel{
         setSize(w,h);
         dx = w/2 - 20;
         dy = h/2 - 20;
+        this.addKeyListener(this);
+        setFocusable(true);
+        setFocusTraversalKeysEnabled(false);
+        requestFocusInWindow();
     }
 
     public void paint(Graphics g){
@@ -79,4 +83,15 @@ public class VisualiserPanel extends JPanel{
         scale *= k;
     }
 
+    @Override
+    public void keyPressed(KeyEvent e) {
+        if (e.getKeyCode() == 38){  		/* KEY UP */
+            scale *= 1.1;
+        } else if (e.getKeyCode() == 40){  	/* KEY DOWN */
+            scale *= 0.9;
+        }
+    }
+
+    public void keyReleased(KeyEvent e) {}
+    public void keyTyped(KeyEvent e) {}
 }

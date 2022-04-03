@@ -22,7 +22,7 @@ public class Simulator {
 
     private final CyclicBarrier cyclicBarrier;
 
-    private SharedList sharedList;
+    private final BodiesSharedList sharedList;
 
     private double vt;
     private long iter;
@@ -34,6 +34,7 @@ public class Simulator {
         this.nBodies = 10000;
         this.cores = Runtime.getRuntime().availableProcessors();
         readBodies = new ArrayList<>();
+        this.sharedList = this.context.getSharedList();
 
         this.cyclicBarrier = new CyclicBarrier(Math.min(this.nBodies, this.cores), () -> {
             this.readBodies = sharedList.getBodies();
@@ -46,7 +47,6 @@ public class Simulator {
                 context.setKeepWorking(false);
         });
 
-        this.sharedList = new SharedList();
 
         createBodies(nBodies);
     }

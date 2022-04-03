@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class SharedList {
+public class BodiesSharedList {
 
     private final List<Body> updatedBodies;
 
-    public SharedList() {
+    public BodiesSharedList() {
         updatedBodies = new ArrayList<>();
     }
 

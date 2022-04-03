@@ -6,10 +6,12 @@ public class Context {
 
     private Boundary boundary;
     private boolean keepWorking;
+    private final BodiesSharedList sharedList;
 
     public Context() {
         this.boundary = new Boundary(-6.0, -6.0, 6.0, 6.0);
         this.keepWorking = true;
+        this.sharedList = new BodiesSharedList();
     }
 
     public Boundary getBoundary() {
@@ -26,5 +28,9 @@ public class Context {
 
     public void setKeepWorking(boolean keepWorking) {
         this.keepWorking = keepWorking;
+    }
+
+    public BodiesSharedList getSharedList() {
+        return sharedList;
     }
 }

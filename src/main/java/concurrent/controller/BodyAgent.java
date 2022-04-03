@@ -2,7 +2,7 @@ package concurrent.controller;
 
 import concurrent.model.Body;
 import concurrent.model.Context;
-import concurrent.model.SharedList;
+import concurrent.model.BodiesSharedList;
 import concurrent.model.V2d;
 
 import java.util.List;
@@ -13,10 +13,10 @@ public class BodyAgent extends Thread{
     private final int endIndex;
     private final CyclicBarrier cyclicBarrier;
     private final List<Body> allBodies;
-    private final SharedList sharedList;
+    private final BodiesSharedList sharedList;
     private final Context context;
 
-    public BodyAgent(int startIndex, int endIndex, final List<Body> bodies, final CyclicBarrier cyclicBarrier, final SharedList sharedList, final Context context){
+    public BodyAgent(int startIndex, int endIndex, final List<Body> bodies, final CyclicBarrier cyclicBarrier, final BodiesSharedList sharedList, final Context context){
         super.setName("BodyAgent" + startIndex);
         this.startIndex = startIndex;
         this.endIndex = endIndex;

@@ -15,7 +15,9 @@ public class Simulator {
     private final int cores;
 
     /* bodies in the field */
-    List<Body> readBodies;
+    private List<Body> readBodies;
+
+    private List<BodyAgent> agents;
 
     /* boundary of the field */
     private long nSteps;
@@ -33,7 +35,8 @@ public class Simulator {
         this.context = new Context();
         this.nBodies = 10000;
         this.cores = Runtime.getRuntime().availableProcessors();
-        readBodies = new ArrayList<>();
+        this.readBodies = new ArrayList<>();
+        this.agents = new ArrayList<>();
         this.sharedList = this.context.getSharedList();
 
         this.cyclicBarrier = new CyclicBarrier(Math.min(this.nBodies, this.cores), () -> {
@@ -47,7 +50,6 @@ public class Simulator {
                 context.setKeepWorking(false);
         });
 
-
         createBodies(nBodies);
     }
 
@@ -59,16 +61,17 @@ public class Simulator {
 
         if (nBodies < cores) {
 			for (int i = 0; i < nBodies; i++) {
-                createAndStartAgent(i, i+1);
+                createAgent(i, i+1);
 			}
         } else {
         	int bodiesPerCore = nBodies / cores;
-            createAndStartAgent(0, bodiesPerCore);
+            createAgent(0, bodiesPerCore);
             for (int i = 1; i < cores - 1; i++) {
-                createAndStartAgent(i * bodiesPerCore, i * bodiesPerCore + bodiesPerCore);
+                createAgent(i * bodiesPerCore, i * bodiesPerCore + bodiesPerCore);
             }
-            createAndStartAgent(bodiesPerCore * (cores - 1), this.readBodies.size());
+            createAgent(bodiesPerCore * (cores - 1), this.readBodies.size());
         }
+        startAgents();
     }
 
     private void createBodies(final int nBodies) {
@@ -82,8 +85,18 @@ public class Simulator {
         sharedList.addBodies(readBodies);
     }
 
-    private void createAndStartAgent(final int startIndex, final int endIndex) {
-        new BodyAgent(startIndex, endIndex, this.readBodies, this.cyclicBarrier, this.sharedList, this.context).start();
+    private void createAgent(final int startIndex, final int endIndex) {
+        agents.add(new BodyAgent(startIndex, endIndex, this.readBodies, this.cyclicBarrier, this.sharedList, this.context));
+    }
+
+    private void startAgents() {
+        for (BodyAgent b: agents) {
+            b.start();
+        }
+    }
+
+    public void startSimulation() {
+        startAgents();
     }
 
 }

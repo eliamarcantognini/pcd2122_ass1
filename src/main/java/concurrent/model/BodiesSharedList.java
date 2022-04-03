@@ -6,7 +6,7 @@ import java.util.List;
 
 public class BodiesSharedList {
 
-    private final List<Body> updatedBodies;
+    private List<Body> updatedBodies;
 
     public BodiesSharedList() {
         updatedBodies = new ArrayList<>();
@@ -22,5 +22,9 @@ public class BodiesSharedList {
 
     public void addBodies(Collection<Body> collection) {
         updatedBodies.addAll(collection);
+    }
+
+    public void reset() {
+        this.updatedBodies = new ArrayList<>();
     }
 }

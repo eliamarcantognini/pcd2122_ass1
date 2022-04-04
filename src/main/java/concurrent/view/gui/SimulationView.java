@@ -36,6 +36,14 @@ public class SimulationView implements View {
         frame.display(bodies, vt, iter, bounds);
     }
 
+    public void setStopEnabled(final Boolean enabled){
+        this.btnStop.setEnabled(enabled);
+    }
+
+    public void setStartEnabled(final Boolean enabled){
+        this.btnStart.setEnabled(enabled);
+    }
+
     public class VisualiserFrame extends JFrame {
 
         private final VisualiserPanel panel;

@@ -49,7 +49,6 @@ public class Simulator {
             iter++;
             /* display current stage */
             viewer.display(readBodies, vt, iter, context.getBoundary());
-            System.out.println(this.iter);
             if (iter >= nSteps || stopFromGUI) {
                 context.setKeepWorking(false);
                 initSimulation();
@@ -68,6 +67,8 @@ public class Simulator {
 
         createBodies(this.nBodies);
         execute(this.nSteps);
+        viewer.setStopEnabled(false);
+        viewer.setStartEnabled(true);
     }
 
     public void execute(long nSteps) {
@@ -116,11 +117,13 @@ public class Simulator {
 
     public void startSimulation() {
         startAgents();
+        viewer.setStartEnabled(false);
+        viewer.setStopEnabled(true);
     }
 
     public void stopSimulation() {
         this.stopFromGUI = true;
-//        initSimulation();
+        viewer.setStopEnabled(false);
     }
 
 }

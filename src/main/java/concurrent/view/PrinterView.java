@@ -11,4 +11,14 @@ public class PrinterView implements View{
     public void display(List<Body> bodies, double vt, long iter, Boundary bounds) {
         System.out.println(iter);
     }
+
+    @Override
+    public void setStopEnabled(Boolean enabled) {
+
+    }
+
+    @Override
+    public void setStartEnabled(Boolean enabled) {
+
+    }
 }

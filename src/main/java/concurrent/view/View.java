@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface View {
     void display(List<Body> bodies, double vt, long iter, Boundary bounds);
+    void setStopEnabled(final Boolean enabled);
+    void setStartEnabled(final Boolean enabled);
 }

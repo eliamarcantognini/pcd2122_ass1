@@ -10,30 +10,36 @@ import java.util.concurrent.CyclicBarrier;
 
 public class Simulator {
 
-    private final Context context;
+    private Context context;
 
     private final int cores;
 
     /* bodies in the field */
-    List<Body> readBodies;
+    private List<Body> readBodies;
+
+    private List<BodyAgent> agents;
 
     /* boundary of the field */
     private long nSteps;
 
     private final CyclicBarrier cyclicBarrier;
 
-    private final BodiesSharedList sharedList;
+    private BodiesSharedList sharedList;
 
     private double vt;
     private long iter;
     private final int nBodies;
+    private final View viewer;
+    private boolean stopFromGUI = false;
 
     public Simulator(View viewer) {
 
-        this.context = new Context();
-        this.nBodies = 10000;
+        this.nBodies = 10;
         this.cores = Runtime.getRuntime().availableProcessors();
-        readBodies = new ArrayList<>();
+        this.viewer = viewer;
+        this.context = new Context();
+        this.readBodies = new ArrayList<>();
+        this.agents = new ArrayList<>();
         this.sharedList = this.context.getSharedList();
 
         this.cyclicBarrier = new CyclicBarrier(Math.min(this.nBodies, this.cores), () -> {
@@ -42,13 +48,27 @@ public class Simulator {
             vt = vt + Context.DT;
             iter++;
             /* display current stage */
-            viewer.display((ArrayList<Body>) readBodies, vt, iter, context.getBoundary());
-            if (iter >= nSteps)
+            viewer.display(readBodies, vt, iter, context.getBoundary());
+            if (iter >= nSteps || stopFromGUI) {
                 context.setKeepWorking(false);
+                initSimulation();
+            }
         });
 
-
         createBodies(nBodies);
+    }
+
+    private void initSimulation() {
+        this.stopFromGUI = false;
+        this.context = new Context();
+        this.readBodies = new ArrayList<>();
+        this.agents = new ArrayList<>();
+        this.sharedList = this.context.getSharedList();
+
+        createBodies(this.nBodies);
+        execute(this.nSteps);
+        viewer.setStopEnabled(false);
+        viewer.setStartEnabled(true);
     }
 
     public void execute(long nSteps) {
@@ -56,19 +76,7 @@ public class Simulator {
         /* virtual time */
         this.vt = 0;
         this.iter = 0;
-
-        if (nBodies < cores) {
-			for (int i = 0; i < nBodies; i++) {
-                createAndStartAgent(i, i+1);
-			}
-        } else {
-        	int bodiesPerCore = nBodies / cores;
-            createAndStartAgent(0, bodiesPerCore);
-            for (int i = 1; i < cores - 1; i++) {
-                createAndStartAgent(i * bodiesPerCore, i * bodiesPerCore + bodiesPerCore);
-            }
-            createAndStartAgent(bodiesPerCore * (cores - 1), this.readBodies.size());
-        }
+        createAgents();
     }
 
     private void createBodies(final int nBodies) {
@@ -82,8 +90,40 @@ public class Simulator {
         sharedList.addBodies(readBodies);
     }
 
-    private void createAndStartAgent(final int startIndex, final int endIndex) {
-        new BodyAgent(startIndex, endIndex, this.readBodies, this.cyclicBarrier, this.sharedList, this.context).start();
+    private void createAgents(){
+        if (nBodies < cores) {
+            for (int i = 0; i < nBodies; i++) {
+                createAgent(i, i+1);
+            }
+        } else {
+            int bodiesPerCore = nBodies / cores;
+            createAgent(0, bodiesPerCore);
+            for (int i = 1; i < cores - 1; i++) {
+                createAgent(i * bodiesPerCore, i * bodiesPerCore + bodiesPerCore);
+            }
+            createAgent(bodiesPerCore * (cores - 1), this.readBodies.size());
+        }
+    }
+
+    private void createAgent(final int startIndex, final int endIndex) {
+        agents.add(new BodyAgent(startIndex, endIndex, this.readBodies, this.cyclicBarrier, this.sharedList, this.context));
+    }
+
+    private void startAgents() {
+        for (BodyAgent b: agents) {
+            b.start();
+        }
+    }
+
+    public void startSimulation() {
+        startAgents();
+        viewer.setStartEnabled(false);
+        viewer.setStopEnabled(true);
+    }
+
+    public void stopSimulation() {
+        this.stopFromGUI = true;
+        viewer.setStopEnabled(false);
     }
 
 }

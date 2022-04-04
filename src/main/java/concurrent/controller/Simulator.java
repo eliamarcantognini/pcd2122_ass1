@@ -35,7 +35,7 @@ public class Simulator {
     public Simulator(View viewer) {
 
         this.context = new Context();
-        this.nBodies = 10000;
+        this.nBodies = 10;
         this.cores = Runtime.getRuntime().availableProcessors();
         this.readBodies = new ArrayList<>();
         this.agents = new ArrayList<>();
@@ -48,7 +48,7 @@ public class Simulator {
             vt = vt + Context.DT;
             iter++;
             /* display current stage */
-            viewer.display((ArrayList<Body>) readBodies, vt, iter, context.getBoundary());
+            viewer.display(readBodies, vt, iter, context.getBoundary());
             if (iter >= nSteps || stopGUI)
                 context.setKeepWorking(false);
 

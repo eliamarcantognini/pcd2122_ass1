@@ -6,11 +6,11 @@ import concurrent.model.P2d;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
+import java.util.List;
 
 public class VisualiserPanel extends JPanel {
 
-    private ArrayList<Body> bodies;
+    private List<Body> bodies;
     private Boundary bounds;
 
     private long nIter;
@@ -69,7 +69,7 @@ public class VisualiserPanel extends JPanel {
         return (int) (dy - y * dy * scale);
     }
 
-    public void display(ArrayList<Body> bodies, double vt, long iter, Boundary bounds) {
+    public void display(List<Body> bodies, double vt, long iter, Boundary bounds) {
         this.bodies = bodies;
         this.bounds = bounds;
         this.vt = vt;

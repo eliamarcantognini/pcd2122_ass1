@@ -5,6 +5,7 @@ import concurrent.model.Boundary;
 import concurrent.view.View;
 
 import javax.swing.*;
+import java.util.List;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
@@ -31,7 +32,7 @@ public class SimulationView implements View {
     }
 
     @Override
-    public void display(ArrayList<Body> bodies, double vt, long iter, Boundary bounds) {
+    public void display(List<Body> bodies, double vt, long iter, Boundary bounds) {
         frame.display(bodies, vt, iter, bounds);
     }
 
@@ -83,7 +84,7 @@ public class SimulationView implements View {
             this.setVisible(true);
         }
 
-        public void display(ArrayList<Body> bodies, double vt, long iter, Boundary bounds) {
+        public void display(List<Body> bodies, double vt, long iter, Boundary bounds) {
 
             setFocusable(true);
             setFocusTraversalKeysEnabled(false);

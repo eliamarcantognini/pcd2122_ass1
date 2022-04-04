@@ -3,80 +3,87 @@ package concurrent.controller;
 import concurrent.model.*;
 import concurrent.view.View;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 import java.util.concurrent.CyclicBarrier;
 
 public class Simulator {
 
-	private final Context context;
+    private final Context context;
 
-	private final View viewer;
+    private final int cores;
 
-	/* bodies in the field */
-	List<Body> readBodies;
+    /* bodies in the field */
+    List<Body> readBodies;
 
-	/* boundary of the field */
-	private long nSteps;
+    /* boundary of the field */
+    private long nSteps;
 
-	private final CyclicBarrier cyclicBarrier;
+    private final CyclicBarrier cyclicBarrier;
 
-	private SharedList sharedList;
+    private final BodiesSharedList sharedList;
 
-	private double vt;
-	private long iter;
+    private double vt;
+    private long iter;
+    private final int nBodies;
 
-	public Simulator(View viewer) {
+    public Simulator(View viewer) {
 
-		this.context = new Context();
-		this.viewer = viewer;
-		int nBodies = 10;
-		readBodies = new ArrayList<>();
+        this.context = new Context();
+        this.nBodies = 10000;
+        this.cores = Runtime.getRuntime().availableProcessors();
+        readBodies = new ArrayList<>();
+        this.sharedList = this.context.getSharedList();
 
-		this.cyclicBarrier = new CyclicBarrier(nBodies, () -> {
-			this.readBodies = sharedList.getBodies();
+        this.cyclicBarrier = new CyclicBarrier(Math.min(this.nBodies, this.cores), () -> {
+            this.readBodies = sharedList.getBodies();
+            /* update virtual time */
+            vt = vt + Context.DT;
+            iter++;
+            /* display current stage */
+            viewer.display((ArrayList<Body>) readBodies, vt, iter, context.getBoundary());
+            if (iter >= nSteps)
+                context.setKeepWorking(false);
+        });
 
-			/* update virtual time */
 
-			vt = vt + Context.DT;
-			iter++;
+        createBodies(nBodies);
+    }
 
-			/* display current stage */
+    public void execute(long nSteps) {
+        this.nSteps = nSteps;
+        /* virtual time */
+        this.vt = 0;
+        this.iter = 0;
 
-			viewer.display((ArrayList<Body>) readBodies, vt, iter, context.getBoundary());
-			if (iter >= nSteps)
-				context.setKeepWorking(false);
-		});
+        if (nBodies < cores) {
+			for (int i = 0; i < nBodies; i++) {
+                createAndStartAgent(i, i+1);
+			}
+        } else {
+        	int bodiesPerCore = nBodies / cores;
+            createAndStartAgent(0, bodiesPerCore);
+            for (int i = 1; i < cores - 1; i++) {
+                createAndStartAgent(i * bodiesPerCore, i * bodiesPerCore + bodiesPerCore);
+            }
+            createAndStartAgent(bodiesPerCore * (cores - 1), this.readBodies.size());
+        }
+    }
 
-		this.sharedList = new SharedList();
+    private void createBodies(final int nBodies) {
+        Random rand = new Random(System.currentTimeMillis());
+        for (int i = 0; i < nBodies; i++) {
+            double x = context.getBoundary().getX0() * 0.25 + rand.nextDouble() * (context.getBoundary().getX1() - context.getBoundary().getX0()) * 0.25;
+            double y = context.getBoundary().getY0() * 0.25 + rand.nextDouble() * (context.getBoundary().getY1() - context.getBoundary().getY0()) * 0.25;
+            Body b = new Body(i, new P2d(x, y), new V2d(0, 0), 10);
+            readBodies.add(new Body(b));
+        }
+        sharedList.addBodies(readBodies);
+    }
 
-		createBodies(nBodies);
-	}
-	
-	public void execute(long nSteps) {
-
-		this.nSteps = nSteps;
-
-		/* init virtual time */
-
-		/* virtual time */
-		this.vt = 0;
-
-		this.iter = 0;
-
-		for (Body b: readBodies) {
-			new BodyAgent(b, this.readBodies, this.cyclicBarrier, this.sharedList, this.context).start();
-		}
-	}
-
-	private void createBodies(final int nBodies) {
-		Random rand = new Random(System.currentTimeMillis());
-		for (int i = 0; i < nBodies; i++) {
-			double x = context.getBoundary().getX0()*0.25 + rand.nextDouble() * (context.getBoundary().getX1() - context.getBoundary().getX0()) * 0.25;
-			double y = context.getBoundary().getY0()*0.25 + rand.nextDouble() * (context.getBoundary().getY1() - context.getBoundary().getY0()) * 0.25;
-			Body b = new Body(i, new P2d(x, y), new V2d(0, 0), 10);
-			readBodies.add(new Body(b));
-		}
-		sharedList.addBodies(readBodies);
-	}
+    private void createAndStartAgent(final int startIndex, final int endIndex) {
+        new BodyAgent(startIndex, endIndex, this.readBodies, this.cyclicBarrier, this.sharedList, this.context).start();
+    }
 
 }

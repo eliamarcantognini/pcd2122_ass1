@@ -10,7 +10,7 @@ import java.util.concurrent.CyclicBarrier;
 
 public class Simulator {
 
-    private final Context context;
+    private Context context;
 
     private final int cores;
 
@@ -24,23 +24,23 @@ public class Simulator {
 
     private final CyclicBarrier cyclicBarrier;
 
-    private final BodiesSharedList sharedList;
+    private BodiesSharedList sharedList;
 
     private double vt;
     private long iter;
     private final int nBodies;
     private final View viewer;
-    private boolean stopGUI = false;
+    private boolean stopFromGUI = false;
 
     public Simulator(View viewer) {
 
-        this.context = new Context();
         this.nBodies = 10;
         this.cores = Runtime.getRuntime().availableProcessors();
+        this.viewer = viewer;
+        this.context = new Context();
         this.readBodies = new ArrayList<>();
         this.agents = new ArrayList<>();
         this.sharedList = this.context.getSharedList();
-        this.viewer = viewer;
 
         this.cyclicBarrier = new CyclicBarrier(Math.min(this.nBodies, this.cores), () -> {
             this.readBodies = sharedList.getBodies();
@@ -49,12 +49,25 @@ public class Simulator {
             iter++;
             /* display current stage */
             viewer.display(readBodies, vt, iter, context.getBoundary());
-            if (iter >= nSteps || stopGUI)
+            System.out.println(this.iter);
+            if (iter >= nSteps || stopFromGUI) {
                 context.setKeepWorking(false);
-
+                initSimulation();
+            }
         });
 
         createBodies(nBodies);
+    }
+
+    private void initSimulation() {
+        this.stopFromGUI = false;
+        this.context = new Context();
+        this.readBodies = new ArrayList<>();
+        this.agents = new ArrayList<>();
+        this.sharedList = this.context.getSharedList();
+
+        createBodies(this.nBodies);
+        execute(this.nSteps);
     }
 
     public void execute(long nSteps) {
@@ -62,20 +75,7 @@ public class Simulator {
         /* virtual time */
         this.vt = 0;
         this.iter = 0;
-
-        if (nBodies < cores) {
-			for (int i = 0; i < nBodies; i++) {
-                createAgent(i, i+1);
-			}
-        } else {
-        	int bodiesPerCore = nBodies / cores;
-            createAgent(0, bodiesPerCore);
-            for (int i = 1; i < cores - 1; i++) {
-                createAgent(i * bodiesPerCore, i * bodiesPerCore + bodiesPerCore);
-            }
-            createAgent(bodiesPerCore * (cores - 1), this.readBodies.size());
-        }
-
+        createAgents();
     }
 
     private void createBodies(final int nBodies) {
@@ -87,6 +87,21 @@ public class Simulator {
             readBodies.add(new Body(b));
         }
         sharedList.addBodies(readBodies);
+    }
+
+    private void createAgents(){
+        if (nBodies < cores) {
+            for (int i = 0; i < nBodies; i++) {
+                createAgent(i, i+1);
+            }
+        } else {
+            int bodiesPerCore = nBodies / cores;
+            createAgent(0, bodiesPerCore);
+            for (int i = 1; i < cores - 1; i++) {
+                createAgent(i * bodiesPerCore, i * bodiesPerCore + bodiesPerCore);
+            }
+            createAgent(bodiesPerCore * (cores - 1), this.readBodies.size());
+        }
     }
 
     private void createAgent(final int startIndex, final int endIndex) {
@@ -104,7 +119,8 @@ public class Simulator {
     }
 
     public void stopSimulation() {
-        this.stopGUI = true;
+        this.stopFromGUI = true;
+//        initSimulation();
     }
 
 }

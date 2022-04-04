@@ -6,7 +6,7 @@ public class Context {
 
     private Boundary boundary;
     private boolean keepWorking;
-    private final BodiesSharedList sharedList;
+    private BodiesSharedList sharedList;
 
     public Context() {
         this.boundary = new Boundary(-6.0, -6.0, 6.0, 6.0);
@@ -33,4 +33,6 @@ public class Context {
     public BodiesSharedList getSharedList() {
         return sharedList;
     }
+
+    public void resetSharedList() { this.sharedList = new BodiesSharedList();}
 }

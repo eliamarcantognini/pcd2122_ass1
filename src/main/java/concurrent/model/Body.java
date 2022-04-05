@@ -25,25 +25,25 @@ public class Body {
 
     public Body(Body b) {
         this.id = b.getId();
-        this.pos = b.getPos();
-        this.vel = b.getVel();
+        this.pos = new P2d(b.getPos());
+        this.vel = new V2d(b.getVel());
         this.mass = b.getMass();
     }
 
     public double getMass() {
-        return mass;
+        return this.mass;
     }
 
     public P2d getPos() {
-        return new P2d(pos);
+        return this.pos;
     }
 
     public V2d getVel() {
-        return new V2d(vel);
+        return this.vel;
     }
 
     public int getId() {
-        return id;
+        return this.id;
     }
 
     public boolean equals(Object b) {

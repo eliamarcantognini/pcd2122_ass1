@@ -43,7 +43,9 @@ public class Simulator {
         this.sharedList = this.context.getSharedList();
 
         this.cyclicBarrier = new CyclicBarrier(Math.min(this.nBodies, this.cores), () -> {
-            this.readBodies = sharedList.getBodies();
+            for (Body b: readBodies) {
+                this.readBodies.set(b.getId(), sharedList.getBodies().get(b.getId()));
+            }
             /* update virtual time */
             vt = vt + Context.DT;
             iter++;

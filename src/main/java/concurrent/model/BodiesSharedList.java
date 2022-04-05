@@ -13,7 +13,7 @@ public class BodiesSharedList {
     }
 
     public List<Body> getBodies() {
-        return updatedBodies;
+        return new ArrayList<>(updatedBodies);
     }
 
     public void updateBody(Body body) {

@@ -35,7 +35,7 @@ public class Simulator {
 
     public Simulator(View viewer) {
 
-        this.nBodies = 5;
+        this.nBodies = 3;
         this.cores = Runtime.getRuntime().availableProcessors();
         this.viewer = viewer;
         this.context = new Context();
@@ -44,7 +44,12 @@ public class Simulator {
         this.sharedList = this.context.getSharedList();
 
         this.cyclicBarrier = new CyclicBarrier(Math.min(this.nBodies, this.cores), () -> {
-            this.readBodies = sharedList.getBodies();
+            Verify.beginAtomic();
+            for (Body b: readBodies) {
+                this.readBodies.set(b.getId(), sharedList.getBodies().get(b.getId()));
+            }
+            Verify.endAtomic();
+//            this.readBodies = sharedList.getBodies();
             /* update virtual time */
             vt = vt + Context.DT;
             iter++;

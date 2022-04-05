@@ -18,15 +18,15 @@ public class Body {
 
     public Body(int id, P2d pos, V2d vel, double mass){
     	this.id = id;
-        this.pos = pos;
-        this.vel = vel;
+        this.pos = new P2d(pos);
+        this.vel = new V2d(vel);
         this.mass = mass;
     }
 
     public Body(Body b) {
         this.id = b.getId();
-        this.pos = b.getPos();
-        this.vel = b.getVel();
+        this.pos = new P2d(b.getPos());
+        this.vel = new V2d(b.getVel());
         this.mass = b.getMass();
     }
 
@@ -35,11 +35,11 @@ public class Body {
     }
 
     public P2d getPos(){
-        return new P2d(pos);
+        return this.pos;
     }
 
     public V2d getVel(){
-        return new V2d(vel);
+        return this.vel;
     }
 
     public int getId() {

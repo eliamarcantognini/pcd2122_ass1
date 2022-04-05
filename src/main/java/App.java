@@ -16,6 +16,6 @@ public class App {
 //    	SimulationView viewer = new SimulationView(620,620);
     	Simulator sim = new Simulator(viewer);
 //        viewer.addListener(new GUIListener(sim));
-        sim.execute(5);
+        sim.execute(3);
     }
 }

@@ -1,11 +1,7 @@
 import concurrent.controller.GUIListener;
 import concurrent.controller.Simulator;
 import concurrent.view.PrinterView;
-import concurrent.view.gui.SimulationView;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 
 /**
  * Bodies simulation - legacy code: sequential, unstructured

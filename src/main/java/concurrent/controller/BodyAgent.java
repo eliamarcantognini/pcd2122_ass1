@@ -1,14 +1,14 @@
 package concurrent.controller;
 
+import concurrent.model.BodiesSharedList;
 import concurrent.model.Body;
 import concurrent.model.Context;
-import concurrent.model.BodiesSharedList;
 import concurrent.model.V2d;
 
 import java.util.List;
 import java.util.concurrent.CyclicBarrier;
 
-public class BodyAgent extends Thread{
+public class BodyAgent extends Thread {
     private final int startIndex;
     private final int endIndex;
     private final CyclicBarrier cyclicBarrier;
@@ -16,7 +16,7 @@ public class BodyAgent extends Thread{
     private final BodiesSharedList sharedList;
     private final Context context;
 
-    public BodyAgent(int startIndex, int endIndex, final List<Body> bodies, final CyclicBarrier cyclicBarrier, final BodiesSharedList sharedList, final Context context){
+    public BodyAgent(int startIndex, int endIndex, final List<Body> bodies, final CyclicBarrier cyclicBarrier, final BodiesSharedList sharedList, final Context context) {
         super.setName("BodyAgent" + startIndex);
         this.startIndex = startIndex;
         this.endIndex = endIndex;
@@ -33,15 +33,16 @@ public class BodyAgent extends Thread{
             List<Body> bodiesToCompute = allBodies.subList(this.startIndex, this.endIndex);
 
             for (Body b : bodiesToCompute) {
+                Body body = new Body(b);
                 /* compute total force on bodies */
-                V2d totalForce = computeTotalForceOnBody(b);
+                V2d totalForce = computeTotalForceOnBody(body);
                 /* compute instant acceleration */
-                V2d acc = new V2d(totalForce).scalarMul(1.0 / b.getMass());
+                V2d acc = new V2d(totalForce).scalarMul(1.0 / body.getMass());
                 /* update velocity */
-                b.updateVelocity(acc, Context.DT);
-                b.updatePos(Context.DT);
-                b.checkAndSolveBoundaryCollision(context.getBoundary());
-                sharedList.updateBody(new Body(b));
+                body.updateVelocity(acc, Context.DT);
+                body.updatePos(Context.DT);
+                body.checkAndSolveBoundaryCollision(context.getBoundary());
+                sharedList.updateBody(body);
             }
 
             try {
@@ -52,7 +53,6 @@ public class BodyAgent extends Thread{
             }
         }
     }
-
 
 
     private V2d computeTotalForceOnBody(Body body) {

@@ -31,16 +31,22 @@ public class Simulator {
     private final int nBodies;
     private final View viewer;
     private boolean stopFromGUI = false;
+    private final long t;
+    private int mode;
 
-    public Simulator(View viewer) {
-
-        this.nBodies = 10;
-        this.cores = Runtime.getRuntime().availableProcessors();
+    public Simulator(View viewer, int nBodies, int mode) {
+        this.mode = mode;
+        this.nBodies = nBodies;
+        if (mode == 0)
+            this.cores = Runtime.getRuntime().availableProcessors();
+        else
+            this.cores = nBodies;
         this.viewer = viewer;
         this.context = new Context();
         this.readBodies = new ArrayList<>();
         this.agents = new ArrayList<>();
         this.sharedList = this.context.getSharedList();
+        this.t = System.currentTimeMillis();
 
         this.cyclicBarrier = new CyclicBarrier(Math.min(this.nBodies, this.cores), () -> {
             this.readBodies = sharedList.getBodies();
@@ -51,7 +57,12 @@ public class Simulator {
             viewer.display(readBodies, vt, iter, context.getBoundary());
             if (iter >= nSteps || stopFromGUI) {
                 context.setKeepWorking(false);
-                initSimulation();
+                long r = System.currentTimeMillis() - t;
+                if (mode == 0)
+                    System.out.println("SCALA> nBodies: " + nBodies + " nSteps: " + nSteps + " ___ RES: " + r + "ms");
+                else
+                    System.out.println("FULLT> nBodies: " + nBodies + " nSteps: " + nSteps + " ___ RES: " + r + "ms");
+//                initSimulation();
             }
         });
 
@@ -77,6 +88,7 @@ public class Simulator {
         this.vt = 0;
         this.iter = 0;
         createAgents();
+        startAgents();
     }
 
     private void createBodies(final int nBodies) {

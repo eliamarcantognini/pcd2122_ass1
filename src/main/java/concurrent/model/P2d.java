@@ -9,6 +9,11 @@ public class P2d {
         this.y = y;
     }
 
+    public P2d(P2d p) {
+        this.x = p.getX();
+        this.y = p.getY();
+    }
+
     public P2d sum(V2d v) {
     	x += v.x;
     	y += v.y;

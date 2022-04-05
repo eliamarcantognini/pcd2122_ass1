@@ -35,11 +35,11 @@ public class Body {
     }
 
     public P2d getPos(){
-        return pos;
+        return new P2d(pos);
     }
 
     public V2d getVel(){
-        return vel;
+        return new V2d(vel);
     }
 
     public int getId() {

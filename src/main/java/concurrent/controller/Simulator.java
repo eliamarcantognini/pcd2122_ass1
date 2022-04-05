@@ -2,6 +2,7 @@ package concurrent.controller;
 
 import concurrent.model.*;
 import concurrent.view.View;
+import gov.nasa.jpf.vm.Verify;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +35,7 @@ public class Simulator {
 
     public Simulator(View viewer) {
 
-        this.nBodies = 10;
+        this.nBodies = 5;
         this.cores = Runtime.getRuntime().availableProcessors();
         this.viewer = viewer;
         this.context = new Context();
@@ -50,8 +51,10 @@ public class Simulator {
             /* display current stage */
             viewer.display(readBodies, vt, iter, context.getBoundary());
             if (iter >= nSteps || stopFromGUI) {
+                Verify.beginAtomic();
                 context.setKeepWorking(false);
-                initSimulation();
+                Verify.endAtomic();
+//                initSimulation();
             }
         });
 
@@ -77,6 +80,7 @@ public class Simulator {
         this.vt = 0;
         this.iter = 0;
         createAgents();
+        startAgents();
     }
 
     private void createBodies(final int nBodies) {

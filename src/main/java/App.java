@@ -12,10 +12,10 @@ public class App {
 
     public static void main(String[] args) {
                 
-//        PrinterView viewer = new PrinterView();
-    	SimulationView viewer = new SimulationView(620,620);
+        PrinterView viewer = new PrinterView();
+//    	SimulationView viewer = new SimulationView(620,620);
     	Simulator sim = new Simulator(viewer);
-        viewer.addListener(new GUIListener(sim));
-        sim.execute(5000);
+//        viewer.addListener(new GUIListener(sim));
+        sim.execute(5);
     }
 }

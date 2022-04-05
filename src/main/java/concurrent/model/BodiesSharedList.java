@@ -13,7 +13,7 @@ public class BodiesSharedList {
     }
 
     public List<Body> getBodies() {
-        return updatedBodies;
+        return new ArrayList<>(updatedBodies);
     }
 
     public void updateBody(Body body) {
@@ -27,4 +27,5 @@ public class BodiesSharedList {
     public void reset() {
         this.updatedBodies = new ArrayList<>();
     }
+
 }

@@ -16,3 +16,12 @@ FULLT> nBodies: 1000 nSteps: 50000 ___ RES: 527608ms
 FULLT> nBodies: 5000 nSteps: 1000 ___ RES: 58198ms
 FULLT> nBodies: 5000 nSteps: 10000 ___ RES: 578232ms
 FULLT> nBodies: 5000 nSteps: 50000 ___ RES: 2897990ms
+SEQ> nBodies: 100 nSteps: 1000 ___ RES: 83ms
+SEQ> nBodies: 100 nSteps: 10000 ___ RES: 686ms
+SEQ> nBodies: 100 nSteps: 50000 ___ RES: 2465ms
+SEQ> nBodies: 1000 nSteps: 1000 ___ RES: 7145ms
+SEQ> nBodies: 1000 nSteps: 10000 ___ RES: 72094ms
+SEQ> nBodies: 1000 nSteps: 50000 ___ RES: 359054ms
+SEQ> nBodies: 5000 nSteps: 1000 ___ RES: 175565ms
+SEQ> nBodies: 5000 nSteps: 10000 ___ RES: 1477274ms
+SEQ> nBodies: 5000 nSteps: 50000 ___ RES: 9271029ms

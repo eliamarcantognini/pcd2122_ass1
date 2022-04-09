@@ -55,8 +55,8 @@ public class BodyAgent extends Thread {
                 /* compute instant acceleration */
                 V2d acc = new V2d(totalForce).scalarMul(1.0 / body.getMass());
                 /* update velocity */
-                body.updateVelocity(acc, Context.DT);
-                body.updatePos(Context.DT);
+                body.updateVelocity(acc, this.context.getDT());
+                body.updatePos(this.context.getDT());
                 body.checkAndSolveBoundaryCollision(context.getBoundary());
                 writeSharedList.updateBody(body);
             }

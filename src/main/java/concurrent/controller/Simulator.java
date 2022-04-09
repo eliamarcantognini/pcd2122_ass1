@@ -28,6 +28,7 @@ public class Simulator {
     private final int nBodies;
     private final View viewer;
     private boolean stopFromGUI = false;
+    private final ReadConfiguration readConfiguration;
 
     /**
      * Create the controller and the shared elements in the system, which are the @Context and the CyclicBarrier used
@@ -37,16 +38,17 @@ public class Simulator {
      */
     public Simulator(View viewer) {
 
-        this.nBodies = 10;
-        this.nSteps = 5000;
+
+        this.readConfiguration = new ReadConfiguration("config.properties");
+        this.nBodies = this.readConfiguration.getBodiesQuantity();
+        this.nSteps = this.readConfiguration.getIterationsQuantity();
         this.cores = Runtime.getRuntime().availableProcessors();
         this.viewer = viewer;
-
         this.cyclicBarrier = new CyclicBarrier(Math.min(this.nBodies, this.cores), () -> {
             readSharedList.reset();
             readSharedList.addBodies(writeSharedList.getBodies());
             /* update virtual time */
-            vt = vt + Context.DT;
+            vt = vt + this.context.getDT();
             iter++;
             /* display current stage */
             viewer.display(readSharedList.getBodies(), vt, iter, context.getBoundary());
@@ -55,6 +57,12 @@ public class Simulator {
                 initSimulation();
             }
         });
+
+        Boundary boundary = new Boundary(this.readConfiguration.getLefterBoundary(),
+                this.readConfiguration.getUpperBoundary(),
+                this.readConfiguration.getRighterBoundary(),
+                this.readConfiguration.getLowerBoundary());
+        this.context = new Context(boundary,this.readConfiguration.getDT());
 
         initSimulation();
 
@@ -80,7 +88,7 @@ public class Simulator {
 
     private void initSimulation() {
         this.stopFromGUI = false;
-        this.context = new Context();
+        this.context = new Context(this.context.getBoundary(), this.context.getDT());
         this.agents = new ArrayList<>();
         this.readSharedList = this.context.getReadSharedList();
         this.writeSharedList = this.context.getWriteSharedList();

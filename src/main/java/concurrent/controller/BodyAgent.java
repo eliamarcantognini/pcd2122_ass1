@@ -16,13 +16,13 @@ public class BodyAgent extends Thread {
     private final BodiesSharedList sharedList;
     private final Context context;
 
-    public BodyAgent(int startIndex, int endIndex, final List<Body> bodies, final CyclicBarrier cyclicBarrier, final BodiesSharedList sharedList, final Context context) {
+    public BodyAgent(int startIndex, int endIndex, final List<Body> bodies, final CyclicBarrier cyclicBarrier, final Context context) {
         super.setName("BodyAgent" + startIndex);
         this.startIndex = startIndex;
         this.endIndex = endIndex;
         this.cyclicBarrier = cyclicBarrier;
         this.allBodies = bodies;
-        this.sharedList = sharedList;
+        this.sharedList = context.getSharedList();
         this.context = context;
     }
 

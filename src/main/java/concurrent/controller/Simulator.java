@@ -108,7 +108,7 @@ public class Simulator {
     }
 
     private void createAgent(final int startIndex, final int endIndex) {
-        agents.add(new BodyAgent(startIndex, endIndex, this.readBodies, this.cyclicBarrier, this.sharedList, this.context));
+        agents.add(new BodyAgent(startIndex, endIndex, this.readBodies, this.cyclicBarrier, this.context));
     }
 
     private void startAgents() {

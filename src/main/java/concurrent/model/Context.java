@@ -1,5 +1,13 @@
 package concurrent.model;
 
+/**
+ * Context class represents context of the simulation. It contains information about time and limits of two-dimensional
+ * world. It also allows to know if simulation is ended or not. It owns two {@link concurrent.model.BodiesSharedList} to use
+ * one to read and the other to write.
+ *
+ * @see concurrent.model.BodiesSharedList
+ */
+
 public class Context {
 
     public final static double DT = 0.001;

@@ -17,13 +17,21 @@ public class ReadConfiguration {
     private static final String LEFTER_BOUNDARY_FIELD_NAME = "lefter_boundary";
     private final Properties properties;
 
-    public ReadConfiguration(final String fileName) throws IOException {
+    public ReadConfiguration(final String fileName){
         this.properties = new Properties();
         String path = new File("src/main/resources/"+fileName)
                 .getAbsolutePath();
-        FileInputStream inputStream = new FileInputStream(path);
-        this.properties.load(inputStream);
-//        this.properties.load(getClass().getResourceAsStream(fileName));
+        FileInputStream inputStream = null;
+        try {
+            inputStream = new FileInputStream(path);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        try {
+            this.properties.load(inputStream);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public double getDT(){

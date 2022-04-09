@@ -30,7 +30,9 @@ public class Simulator {
     private boolean stopFromGUI = false;
 
     /**
-     * Create the controller.
+     * Create the controller and the shared elements in the system, which are the @Context and the CyclicBarrier used
+     * for synchronization.
+     *
      * @param viewer - the view to be used to display the evolution of the simulation
      */
     public Simulator(View viewer) {
@@ -71,6 +73,7 @@ public class Simulator {
         viewer.setStopEnabled(false);
         viewer.setStartEnabled(true);
     }
+
 
     public void execute(long nSteps) {
         this.nSteps = nSteps;

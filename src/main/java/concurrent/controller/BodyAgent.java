@@ -8,6 +8,12 @@ import concurrent.model.V2d;
 import java.util.List;
 import java.util.concurrent.CyclicBarrier;
 
+/**
+ * Class that represents the Agents working on the system. Extends thread because he has to execute on a personal
+ * control flow. Its main responsibility is to compute the forces acting on a group of bodies and update their
+ * position every cycle of the simulation. The bodies that the Agent has to manage are identified by their
+ * index in the shared list.
+ */
 public class BodyAgent extends Thread {
     private final int startIndex;
     private final int endIndex;
@@ -16,6 +22,16 @@ public class BodyAgent extends Thread {
     private final BodiesSharedList writeSharedList;
     private final Context context;
 
+    /**
+     * Create the Agent, setting the name of thread for debug purpose and initialing the variables needed for its
+     * computation. The indexes are used to indicate the bodies the Agent has to manage, which are contained in the
+     * shared list of the {@link Context}
+     *
+     * @param startIndex - index of the first body that the Agent has to manage
+     * @param endIndex - index of the last body that the Agent has to manage
+     * @param cyclicBarrier - the barrier where the Agents wait for the other to finish their computation
+     * @param context - context of the system used to recover the shared list of bodies
+     */
     public BodyAgent(int startIndex, int endIndex, final CyclicBarrier cyclicBarrier, final Context context) {
         super.setName("BodyAgent" + startIndex);
         this.startIndex = startIndex;

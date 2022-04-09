@@ -12,7 +12,7 @@ import java.util.concurrent.CyclicBarrier;
  * Class that represents the Agents working on the system. Extends thread because he has to execute on a personal
  * control flow. Its main responsibility is to compute the forces acting on a group of bodies and update their
  * position every cycle of the simulation. The bodies that the Agent has to manage are identified by their
- * index in the shared list.
+ * index in the list shared by {@link Context}.
  */
 public class BodyAgent extends Thread {
     private final int startIndex;

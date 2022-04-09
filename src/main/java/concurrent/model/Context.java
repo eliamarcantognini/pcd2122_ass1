@@ -6,12 +6,14 @@ public class Context {
 
     private Boundary boundary;
     private boolean keepWorking;
-    private BodiesSharedList sharedList;
+    private final BodiesSharedList writeSharedList;
+    private final BodiesSharedList readSharedList;
 
     public Context() {
         this.boundary = new Boundary(-6.0, -6.0, 6.0, 6.0);
         this.keepWorking = true;
-        this.sharedList = new BodiesSharedList();
+        this.writeSharedList = new BodiesSharedList();
+        this.readSharedList = new BodiesSharedList();
     }
 
     public Boundary getBoundary() {
@@ -30,9 +32,14 @@ public class Context {
         this.keepWorking = keepWorking;
     }
 
-    public BodiesSharedList getSharedList() {
-        return sharedList;
+    public BodiesSharedList getWriteSharedList() {
+        return writeSharedList;
     }
 
-    public void resetSharedList() { this.sharedList = new BodiesSharedList();}
+    public BodiesSharedList getReadSharedList() {
+        return readSharedList;
+    }
+
+//    public void resetWriteSharedList() { this.writeSharedList = new BodiesSharedList();}
+
 }

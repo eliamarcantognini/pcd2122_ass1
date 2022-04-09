@@ -12,17 +12,17 @@ public class BodyAgent extends Thread {
     private final int startIndex;
     private final int endIndex;
     private final CyclicBarrier cyclicBarrier;
-    private final List<Body> allBodies;
-    private final BodiesSharedList sharedList;
+    private final BodiesSharedList readSharedList;
+    private final BodiesSharedList writeSharedList;
     private final Context context;
 
-    public BodyAgent(int startIndex, int endIndex, final List<Body> bodies, final CyclicBarrier cyclicBarrier, final Context context) {
+    public BodyAgent(int startIndex, int endIndex, final CyclicBarrier cyclicBarrier, final Context context) {
         super.setName("BodyAgent" + startIndex);
         this.startIndex = startIndex;
         this.endIndex = endIndex;
         this.cyclicBarrier = cyclicBarrier;
-        this.allBodies = bodies;
-        this.sharedList = context.getSharedList();
+        this.readSharedList = context.getReadSharedList();
+        this.writeSharedList = context.getWriteSharedList();
         this.context = context;
     }
 
@@ -30,7 +30,7 @@ public class BodyAgent extends Thread {
     public void run() {
         while (this.context.isKeepWorking()) {
 
-            List<Body> bodiesToCompute = allBodies.subList(this.startIndex, this.endIndex);
+            List<Body> bodiesToCompute = readSharedList.getBodies().subList(this.startIndex, this.endIndex);
 
             for (Body b : bodiesToCompute) {
                 Body body = new Body(b);
@@ -42,7 +42,7 @@ public class BodyAgent extends Thread {
                 body.updateVelocity(acc, Context.DT);
                 body.updatePos(Context.DT);
                 body.checkAndSolveBoundaryCollision(context.getBoundary());
-                sharedList.updateBody(body);
+                writeSharedList.updateBody(body);
             }
 
             try {
@@ -58,7 +58,7 @@ public class BodyAgent extends Thread {
     private V2d computeTotalForceOnBody(Body body) {
         V2d totalForce = new V2d(0, 0);
         /* compute total repulsive force */
-        for (Body otherBody : this.allBodies) {
+        for (Body otherBody : this.readSharedList.getBodies()) {
             if (!body.equals(otherBody)) {
                 try {
                     V2d forceByOtherBody = body.computeRepulsiveForceBy(otherBody);

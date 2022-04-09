@@ -14,21 +14,14 @@ import java.util.concurrent.CyclicBarrier;
  */
 public class Simulator {
 
-    private Context context;
-
     private final int cores;
-
-    /* bodies in the field */
-    private List<Body> readBodies;
-
-    private List<BodyAgent> agents;
-
-    /* boundary of the field */
-    private long nSteps;
-
     private final CyclicBarrier cyclicBarrier;
-
-    private BodiesSharedList sharedList;
+    private Context context;
+    private List<BodyAgent> agents;
+    private long nSteps;
+    /* bodies in the field */
+    private BodiesSharedList readSharedList;
+    private BodiesSharedList writeSharedList;
 
     private double vt;
     private long iter;
@@ -46,19 +39,18 @@ public class Simulator {
         this.cores = Runtime.getRuntime().availableProcessors();
         this.viewer = viewer;
         this.context = new Context();
-        this.readBodies = new ArrayList<>();
         this.agents = new ArrayList<>();
-        this.sharedList = this.context.getSharedList();
+        this.readSharedList = this.context.getReadSharedList();
+        this.writeSharedList = this.context.getWriteSharedList();
 
         this.cyclicBarrier = new CyclicBarrier(Math.min(this.nBodies, this.cores), () -> {
-            for (Body b: readBodies) {
-                this.readBodies.set(b.getId(), sharedList.getBodies().get(b.getId()));
-            }
+            readSharedList.reset();
+            readSharedList.addBodies(writeSharedList.getBodies());
             /* update virtual time */
             vt = vt + Context.DT;
             iter++;
             /* display current stage */
-            viewer.display(readBodies, vt, iter, context.getBoundary());
+            viewer.display(readSharedList.getBodies(), vt, iter, context.getBoundary());
             if (iter >= nSteps || stopFromGUI) {
                 context.setKeepWorking(false);
                 initSimulation();
@@ -71,10 +63,9 @@ public class Simulator {
     private void initSimulation() {
         this.stopFromGUI = false;
         this.context = new Context();
-        this.readBodies = new ArrayList<>();
         this.agents = new ArrayList<>();
-        this.sharedList = this.context.getSharedList();
-
+        this.readSharedList = this.context.getReadSharedList();
+        this.writeSharedList = this.context.getWriteSharedList();
         createBodies(this.nBodies);
         execute(this.nSteps);
         viewer.setStopEnabled(false);
@@ -90,20 +81,22 @@ public class Simulator {
     }
 
     private void createBodies(final int nBodies) {
+        List<Body> bodies = new ArrayList<>();
         Random rand = new Random(System.currentTimeMillis());
         for (int i = 0; i < nBodies; i++) {
             double x = context.getBoundary().getX0() * 0.25 + rand.nextDouble() * (context.getBoundary().getX1() - context.getBoundary().getX0()) * 0.25;
             double y = context.getBoundary().getY0() * 0.25 + rand.nextDouble() * (context.getBoundary().getY1() - context.getBoundary().getY0()) * 0.25;
             Body b = new Body(i, new P2d(x, y), new V2d(0, 0), 10);
-            readBodies.add(new Body(b));
+            bodies.add(b);
         }
-        sharedList.addBodies(readBodies);
+        readSharedList.addBodies(bodies);
+        writeSharedList.addBodies(readSharedList.getBodies());
     }
 
-    private void createAgents(){
+    private void createAgents() {
         if (nBodies < cores) {
             for (int i = 0; i < nBodies; i++) {
-                createAgent(i, i+1);
+                createAgent(i, i + 1);
             }
         } else {
             int bodiesPerCore = nBodies / cores;
@@ -111,16 +104,16 @@ public class Simulator {
             for (int i = 1; i < cores - 1; i++) {
                 createAgent(i * bodiesPerCore, i * bodiesPerCore + bodiesPerCore);
             }
-            createAgent(bodiesPerCore * (cores - 1), this.readBodies.size());
+            createAgent(bodiesPerCore * (cores - 1), this.readSharedList.getBodies().size());
         }
     }
 
     private void createAgent(final int startIndex, final int endIndex) {
-        agents.add(new BodyAgent(startIndex, endIndex, this.readBodies, this.cyclicBarrier, this.context));
+        agents.add(new BodyAgent(startIndex, endIndex, this.cyclicBarrier, this.context));
     }
 
     private void startAgents() {
-        for (BodyAgent b: agents) {
+        for (BodyAgent b : agents) {
             b.start();
         }
     }

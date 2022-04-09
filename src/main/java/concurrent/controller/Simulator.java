@@ -8,6 +8,10 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CyclicBarrier;
 
+/**
+ * Class that represents the main controller of the system. Its main responsibility is to manage the
+ * Agents of the system, which are represented by the class @BodyAgent.
+ */
 public class Simulator {
 
     private Context context;
@@ -32,6 +36,10 @@ public class Simulator {
     private final View viewer;
     private boolean stopFromGUI = false;
 
+    /**
+     * Create the controller.
+     * @param viewer - the view to be used to display the evolution of the simulation
+     */
     public Simulator(View viewer) {
 
         this.nBodies = 10;

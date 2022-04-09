@@ -10,7 +10,7 @@ import java.util.concurrent.CyclicBarrier;
 
 /**
  * Class that represents the main controller of the system. Its main responsibility is to manage the
- * Agents of the system, which are represented by the class @BodyAgent.
+ * Agents of the system, which are represented by the class {@link BodyAgent}.
  */
 public class Simulator {
 

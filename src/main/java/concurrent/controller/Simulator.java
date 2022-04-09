@@ -62,17 +62,29 @@ public class Simulator {
         createBodies(nBodies);
     }
 
+    /**
+     * Method to call when the simulation has to restart, for example when the button Start from the GUI is
+     * pressed.
+     */
     public void startSimulation() {
         startAgents();
         viewer.setStartEnabled(false);
         viewer.setStopEnabled(true);
     }
 
+    /**
+     * Method to call when the simulation has to stop, for example when the button Stop from the GUI is pressed.
+     */
     public void stopSimulation() {
         this.stopFromGUI = true;
         viewer.setStopEnabled(false);
     }
 
+    /**
+     * This method create the Agent and start the simulation.
+     *
+     * @param nSteps - number of steps to compute in the simulation
+     */
     public void execute(long nSteps) {
         this.nSteps = nSteps;
         /* virtual time */

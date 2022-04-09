@@ -62,6 +62,25 @@ public class Simulator {
         createBodies(nBodies);
     }
 
+    public void startSimulation() {
+        startAgents();
+        viewer.setStartEnabled(false);
+        viewer.setStopEnabled(true);
+    }
+
+    public void stopSimulation() {
+        this.stopFromGUI = true;
+        viewer.setStopEnabled(false);
+    }
+
+    public void execute(long nSteps) {
+        this.nSteps = nSteps;
+        /* virtual time */
+        this.vt = 0;
+        this.iter = 0;
+        createAgents();
+    }
+
     private void initSimulation() {
         this.stopFromGUI = false;
         this.context = new Context();
@@ -72,15 +91,6 @@ public class Simulator {
         execute(this.nSteps);
         viewer.setStopEnabled(false);
         viewer.setStartEnabled(true);
-    }
-
-
-    public void execute(long nSteps) {
-        this.nSteps = nSteps;
-        /* virtual time */
-        this.vt = 0;
-        this.iter = 0;
-        createAgents();
     }
 
     private void createBodies(final int nBodies) {
@@ -120,16 +130,4 @@ public class Simulator {
             b.start();
         }
     }
-
-    public void startSimulation() {
-        startAgents();
-        viewer.setStartEnabled(false);
-        viewer.setStopEnabled(true);
-    }
-
-    public void stopSimulation() {
-        this.stopFromGUI = true;
-        viewer.setStopEnabled(false);
-    }
-
 }

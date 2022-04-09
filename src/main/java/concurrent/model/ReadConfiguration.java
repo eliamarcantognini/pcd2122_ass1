@@ -8,12 +8,13 @@ import java.util.Properties;
 
 public class ReadConfiguration {
 
-    private static final String ITERATIONS_QUANTITY_FIELD_NAME = "iterationsQuantity";
-    private static final String BODIES_QUANTITY_FIELD_NAME = "bodiesQuantity";
-    private static final String UPPER_BOUNDARY_FIELD_NAME = "upperBoundary";
-    private static final String LOWER_BOUNDARY_FIELD_NAME = "lowerBoundary";
-    private static final String RIGHTER_BOUNDARY_FIELD_NAME = "righterBoundary";
-    private static final String LEFTER_BOUNDARY_FIELD_NAME = "lefterBoundary";
+    private static final String ITERATIONS_QUANTITY_FIELD_NAME = "iterations_initial_quantity";
+    private static final String BODIES_QUANTITY_FIELD_NAME = "bodies_initial_quantity";
+    private static final String DT_FIELD_NAME = "delta_incremental_time";
+    private static final String UPPER_BOUNDARY_FIELD_NAME = "upper_boundary";
+    private static final String LOWER_BOUNDARY_FIELD_NAME = "lower_boundary";
+    private static final String RIGHTER_BOUNDARY_FIELD_NAME = "righter_boundary";
+    private static final String LEFTER_BOUNDARY_FIELD_NAME = "lefter_boundary";
     private final Properties properties;
 
     public ReadConfiguration(final String fileName) throws IOException {
@@ -26,30 +27,30 @@ public class ReadConfiguration {
     }
 
     public double getDT(){
-        return Double.parseDouble(this.properties.getProperty("dt"));
+        return Double.parseDouble(this.properties.getProperty(ReadConfiguration.DT_FIELD_NAME));
     }
 
-    public int bodiesQuantity(){
+    public int getBodiesQuantity(){
         return Integer.parseInt(this.properties.getProperty(ReadConfiguration.BODIES_QUANTITY_FIELD_NAME));
     }
 
-    public int iterationsQuantity(){
+    public int getIterationsQuantity(){
         return Integer.parseInt(this.properties.getProperty(ReadConfiguration.ITERATIONS_QUANTITY_FIELD_NAME));
     }
 
-    public int upperBoundary(){
+    public int getUpperBoundary(){
         return Integer.parseInt(this.properties.getProperty(ReadConfiguration.UPPER_BOUNDARY_FIELD_NAME));
     }
 
-    public int lowerBoundary(){
+    public int getLowerBoundary(){
         return Integer.parseInt(this.properties.getProperty(ReadConfiguration.LOWER_BOUNDARY_FIELD_NAME));
     }
 
-    public int righterBoundary(){
+    public int getRighterBoundary(){
         return Integer.parseInt(this.properties.getProperty(ReadConfiguration.RIGHTER_BOUNDARY_FIELD_NAME));
     }
 
-    public int lefterBoundary(){
+    public int getLefterBoundary(){
         return Integer.parseInt(this.properties.getProperty(ReadConfiguration.LEFTER_BOUNDARY_FIELD_NAME));
     }
 

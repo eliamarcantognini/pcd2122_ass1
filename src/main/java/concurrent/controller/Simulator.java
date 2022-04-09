@@ -18,7 +18,7 @@ public class Simulator {
     private final CyclicBarrier cyclicBarrier;
     private Context context;
     private List<BodyAgent> agents;
-    private long nSteps;
+    private final long nSteps;
     /* bodies in the field */
     private BodiesSharedList readSharedList;
     private BodiesSharedList writeSharedList;
@@ -38,12 +38,9 @@ public class Simulator {
     public Simulator(View viewer) {
 
         this.nBodies = 10;
+        this.nSteps = 5000;
         this.cores = Runtime.getRuntime().availableProcessors();
         this.viewer = viewer;
-        this.context = new Context();
-        this.agents = new ArrayList<>();
-        this.readSharedList = this.context.getReadSharedList();
-        this.writeSharedList = this.context.getWriteSharedList();
 
         this.cyclicBarrier = new CyclicBarrier(Math.min(this.nBodies, this.cores), () -> {
             readSharedList.reset();
@@ -59,7 +56,8 @@ public class Simulator {
             }
         });
 
-        createBodies(nBodies);
+        initSimulation();
+
     }
 
     /**
@@ -80,19 +78,6 @@ public class Simulator {
         viewer.setStopEnabled(false);
     }
 
-    /**
-     * This method create the Agent and start the simulation.
-     *
-     * @param nSteps - number of steps to compute in the simulation
-     */
-    public void execute(long nSteps) {
-        this.nSteps = nSteps;
-        /* virtual time */
-        this.vt = 0;
-        this.iter = 0;
-        createAgents();
-    }
-
     private void initSimulation() {
         this.stopFromGUI = false;
         this.context = new Context();
@@ -100,7 +85,9 @@ public class Simulator {
         this.readSharedList = this.context.getReadSharedList();
         this.writeSharedList = this.context.getWriteSharedList();
         createBodies(this.nBodies);
-        execute(this.nSteps);
+        this.vt = 0;
+        this.iter = 0;
+        createAgents();
         viewer.setStopEnabled(false);
         viewer.setStartEnabled(true);
     }

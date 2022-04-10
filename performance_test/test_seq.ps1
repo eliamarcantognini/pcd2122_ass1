@@ -1,14 +1,47 @@
 # nB = nBodies
 # nS = nSteps
 #                   nB  nS
-java -jar .\seq.jar 100 1000
-java -jar .\seq.jar 100 10000
-java -jar .\seq.jar 100 50000
-
-java -jar .\seq.jar 1000 1000
-java -jar .\seq.jar 1000 10000
-java -jar .\seq.jar 1000 50000
-
-java -jar .\seq.jar 5000 1000
-java -jar .\seq.jar 5000 10000
-java -jar .\seq.jar 5000 50000
+java -jar .\seq.jar 100 2000
+java -jar .\seq.jar 200 2000
+java -jar .\seq.jar 300 2000
+java -jar .\seq.jar 400 2000
+java -jar .\seq.jar 500 2000
+java -jar .\seq.jar 600 2000
+java -jar .\seq.jar 700 2000
+java -jar .\seq.jar 800 2000
+java -jar .\seq.jar 900 2000
+java -jar .\seq.jar 1000 2000
+java -jar .\seq.jar 1100 2000
+java -jar .\seq.jar 1200 2000
+java -jar .\seq.jar 1300 2000
+java -jar .\seq.jar 1400 2000
+java -jar .\seq.jar 1500 2000
+java -jar .\seq.jar 1600 2000
+java -jar .\seq.jar 1700 2000
+java -jar .\seq.jar 1800 2000
+java -jar .\seq.jar 1900 2000
+java -jar .\seq.jar 2000 2000
+java -jar .\seq.jar 2100 2000
+java -jar .\seq.jar 2200 2000
+java -jar .\seq.jar 2300 2000
+java -jar .\seq.jar 2400 2000
+java -jar .\seq.jar 2500 2000
+java -jar .\seq.jar 2600 2000
+java -jar .\seq.jar 2700 2000
+java -jar .\seq.jar 2800 2000
+java -jar .\seq.jar 2900 2000
+java -jar .\seq.jar 3000 2000
+java -jar .\seq.jar 3100 2000
+java -jar .\seq.jar 3200 2000
+java -jar .\seq.jar 3300 2000
+java -jar .\seq.jar 3400 2000
+java -jar .\seq.jar 3500 2000
+java -jar .\seq.jar 3600 2000
+java -jar .\seq.jar 3700 2000
+java -jar .\seq.jar 3800 2000
+java -jar .\seq.jar 3900 2000
+java -jar .\seq.jar 4000 2000
+java -jar .\seq.jar 4100 2000
+java -jar .\seq.jar 4200 2000
+java -jar .\seq.jar 4300 2000
+java -jar .\seq.jar 4400 2000

@@ -44,6 +44,11 @@ public class SimulationView implements View {
         this.btnStart.setEnabled(enabled);
     }
 
+    public void addListener(final ActionListener listener) {
+        btnStart.addActionListener(listener);
+        btnStop.addActionListener(listener);
+    }
+
     public class VisualiserFrame extends JFrame {
 
         private final VisualiserPanel panel;
@@ -114,11 +119,4 @@ public class SimulationView implements View {
             panel.updateScale(k);
         }
     }
-
-    public void addListener(final ActionListener listener) {
-        btnStart.addActionListener(listener);
-        btnStop.addActionListener(listener);
-    }
-
-
 }

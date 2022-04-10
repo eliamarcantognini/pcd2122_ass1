@@ -14,10 +14,10 @@ public class App {
     public static void main(String[] args) {
 
         // Start with gui
-//        View viewer = new SimulationView(620,620);
+        View viewer = new SimulationView(620,620);
 
         // Start with print view
-        View viewer = new PrinterView();
+//        View viewer = new PrinterView();
 
         Simulator sim = new Simulator(viewer);
         viewer.addListener(new ViewListener(sim));

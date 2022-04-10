@@ -1,5 +1,7 @@
 import concurrent.controller.GUIListener;
 import concurrent.controller.Simulator;
+import concurrent.view.PrinterView;
+import concurrent.view.View;
 import concurrent.view.gui.SimulationView;
 
 /**
@@ -10,9 +12,14 @@ import concurrent.view.gui.SimulationView;
 public class App {
 
     public static void main(String[] args) {
-                
-    	SimulationView viewer = new SimulationView(620,620);
-    	Simulator sim = new Simulator(viewer);
+
+        // Start with gui
+//        View viewer = new SimulationView(620,620);
+
+        // Start with print view
+        View viewer = new PrinterView();
+
+        Simulator sim = new Simulator(viewer);
         viewer.addListener(new GUIListener(sim));
     }
 }

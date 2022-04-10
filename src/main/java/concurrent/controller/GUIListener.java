@@ -1,19 +1,15 @@
 package concurrent.controller;
+import java.util.EventListener;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-public class GUIListener implements ActionListener {
+public class GUIListener implements EventListener {
     private final Simulator simulator;
-    private final Boolean start = true;
 
     public GUIListener(final Simulator simulator) {
         this.simulator = simulator;
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        switch (e.getActionCommand()) {
+    public void eventPerformed(String code) {
+        switch (code) {
             case "start":
                 simulator.startSimulation();
                 break;
@@ -21,12 +17,7 @@ public class GUIListener implements ActionListener {
                 simulator.stopSimulation();
                 break;
             default:
-                System.out.println(e);
+                break;
         }
-
-    }
-
-    public Boolean getStart() {
-        return start;
     }
 }

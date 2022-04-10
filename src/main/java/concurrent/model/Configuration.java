@@ -6,6 +6,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
 
+/**
+ * Class to manage configuration properties of the simulation. It can read from file data for application and allows to
+ * use getters for obtain data.
+ */
 public class Configuration {
 
     private static final String ITERATIONS_QUANTITY_FIELD_NAME = "iterations_initial_quantity";

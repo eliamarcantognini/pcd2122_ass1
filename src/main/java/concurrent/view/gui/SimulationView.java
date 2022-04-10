@@ -86,8 +86,10 @@ public class SimulationView implements View {
                 public void keyPressed(KeyEvent e) {
                     if (e.getKeyCode() == 38) {        /* KEY UP */
                         updateScale(1.1);
+                        SwingUtilities.invokeLater(frame::repaintView);
                     } else if (e.getKeyCode() == 40) {    /* KEY DOWN */
                         updateScale(0.9);
+                        SwingUtilities.invokeLater(frame::repaintView);
                     }
                 }
                 @Override
@@ -98,9 +100,7 @@ public class SimulationView implements View {
 
         public void display(List<Body> bodies, double vt, long iter, Boundary bounds) {
 
-            setFocusable(true);
-            setFocusTraversalKeysEnabled(false);
-            requestFocusInWindow();
+            this.repaintView();
             try {
                 SwingUtilities.invokeAndWait(() -> {
                     panel.display(bodies, vt, iter, bounds);
@@ -112,6 +112,13 @@ public class SimulationView implements View {
 
         public void updateScale(double k) {
             panel.updateScale(k);
+        }
+
+        public void repaintView(){
+            setFocusable(true);
+            setFocusTraversalKeysEnabled(false);
+            requestFocusInWindow();
+            repaint();
         }
     }
 

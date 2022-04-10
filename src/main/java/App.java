@@ -3,11 +3,10 @@ import concurrent.controller.ViewListener;
 import concurrent.view.View;
 import concurrent.view.gui.GUIView;
 
-/**
- * Bodies simulation - legacy code: sequential, unstructured
- *
- * @author aricci, eliamarcantognini, michel-jpg,
+/*
+ * Elaborato di  Elia Marcantognini, Michele Bachetti, Angelo Tinti
  */
+
 public class App {
 
     public static void main(String[] args) {

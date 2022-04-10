@@ -19,8 +19,9 @@ public class Context {
 
     /**
      * Create the context with boundaries and deltaT passed
+     *
      * @param boundary - boundaries of two-dimensional world
-     * @param dt - the deltaT, that is quantity time added to virtual time each iteration
+     * @param dt       - the deltaT, that is quantity time added to virtual time each iteration
      */
     public Context(final Boundary boundary, final double dt) {
         this.boundary = boundary;

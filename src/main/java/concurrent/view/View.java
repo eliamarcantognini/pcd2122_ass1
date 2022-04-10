@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Interface to be implemented by the classes that are designed to be a View for the system. *
+ * Interface to be implemented by the classes that are designed to be a View for the system.
  */
 public interface View {
     /**
@@ -38,7 +38,7 @@ public interface View {
     /**
      * Method called to set a {@link GUIListener} to respond to certain event.
      *
-     * @param listener - the listener called where the event append
+     * @param listener - the listener to notify when the event happen
      */
     void addListener(final GUIListener listener);
 }

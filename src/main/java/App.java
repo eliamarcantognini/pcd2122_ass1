@@ -4,7 +4,7 @@ import concurrent.view.View;
 import concurrent.view.gui.GUIView;
 
 /*
- * Elaborato di  Elia Marcantognini, Michele Bachetti, Angelo Tinti
+ * Elaborato di Elia Marcantognini, Michele Bachetti, Angelo Tinti
  */
 
 public class App {

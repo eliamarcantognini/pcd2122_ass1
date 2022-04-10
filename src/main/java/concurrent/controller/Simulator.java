@@ -68,9 +68,10 @@ public class Simulator {
 
     /**
      * Method to call when the simulation has to restart, for example when the button Start from the GUI is
-     * pressed.
+     * pressed. It also waits for the termination of the BodyAgents of the previous simulation, if any.
      */
     public void startSimulation() {
+        waitForAgentsToClose();
         startAgents();
         viewer.setStartEnabled(false);
         viewer.setStopEnabled(true);
@@ -157,6 +158,16 @@ public class Simulator {
     private void startAgents() {
         for (BodyAgent b : agents) {
             b.start();
+        }
+    }
+
+    private void waitForAgentsToClose() {
+        for (BodyAgent t: agents) {
+            try {
+                t.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

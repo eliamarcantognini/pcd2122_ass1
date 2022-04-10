@@ -16,8 +16,12 @@ import java.awt.event.*;
  *
  * @author aricci
  */
-public class SimulationView implements View {
+public class GUIView implements View {
 
+    public static final int KEY_UP = 38;
+    public static final int KEY_DOWN = 40;
+    public static final double ZOOM_IN_SCALE = 1.1;
+    public static final double ZOOM_OUT_SCALE = 0.9;
     private final VisualiserFrame frame;
     private JButton btnStart;
     private JButton btnStop;
@@ -28,7 +32,7 @@ public class SimulationView implements View {
      * @param w width
      * @param h height
      */
-    public SimulationView(int w, int h) {
+    public GUIView(int w, int h) {
         this.frame = new VisualiserFrame(w, h);
     }
 
@@ -83,11 +87,11 @@ public class SimulationView implements View {
             getContentPane().add(panel, BorderLayout.CENTER);
 //            addWindowListener(new WindowAdapter() {
 //                public void windowClosing(WindowEvent ev) {
-//                    System.exit(-1);
+//                    System.exit(0);
 //                }
 //
 //                public void windowClosed(WindowEvent ev) {
-//                    System.exit(-1);
+//                    System.exit(0);
 //                }
 //            });
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -96,11 +100,11 @@ public class SimulationView implements View {
                 public void keyTyped(KeyEvent e) {}
                 @Override
                 public void keyPressed(KeyEvent e) {
-                    if (e.getKeyCode() == 38) {        /* KEY UP */
-                        updateScale(1.1);
+                    if (e.getKeyCode() == KEY_UP) {
+                        updateScale(ZOOM_IN_SCALE);
                         SwingUtilities.invokeLater(frame::repaintView);
-                    } else if (e.getKeyCode() == 40) {    /* KEY DOWN */
-                        updateScale(0.9);
+                    } else if (e.getKeyCode() == KEY_DOWN) {
+                        updateScale(ZOOM_OUT_SCALE);
                         SwingUtilities.invokeLater(frame::repaintView);
                     }
                 }

@@ -144,17 +144,9 @@ public class Simulator {
     }
 
     private void createAgents() {
-        if (nBodies < cores) {
-            for (int i = 0; i < nBodies; i++) {
-                createAgent(i, i + 1);
-            }
-        } else {
-            int bodiesPerCore = nBodies / cores;
-            createAgent(0, bodiesPerCore);
-            for (int i = 1; i < cores - 1; i++) {
-                createAgent(i * bodiesPerCore, i * bodiesPerCore + bodiesPerCore);
-            }
-            createAgent(bodiesPerCore * (cores - 1), this.readSharedList.getBodies().size());
+        int bodiesPerCore = nBodies / cores+1;
+        for(int i = 0; i < nBodies; i += bodiesPerCore) {
+            createAgent(i, Math.min(nBodies, i+bodiesPerCore));
         }
     }
 

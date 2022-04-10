@@ -4,16 +4,16 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class SharedList {
+public class BodiesSharedList {
 
-    private final List<Body> updatedBodies;
+    private List<Body> updatedBodies;
 
-    public SharedList() {
+    public BodiesSharedList() {
         updatedBodies = new ArrayList<>();
     }
 
     public List<Body> getBodies() {
-        return updatedBodies;
+        return new ArrayList<>(updatedBodies);
     }
 
     public void updateBody(Body body) {
@@ -22,5 +22,9 @@ public class SharedList {
 
     public void addBodies(Collection<Body> collection) {
         updatedBodies.addAll(collection);
+    }
+
+    public void reset() {
+        this.updatedBodies = new ArrayList<>();
     }
 }

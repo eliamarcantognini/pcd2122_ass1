@@ -4,35 +4,37 @@ public class P2d {
 
     private double x, y;
 
-    public P2d(double x,double y){
+    public P2d(double x, double y) {
         this.x = x;
         this.y = y;
     }
 
-    public P2d sum(V2d v) {
-    	x += v.x;
-    	y += v.y;
-    	return this;
+    public P2d(P2d p) {
+        this.x = p.getX();
+        this.y = p.getY();
     }
-     
-    public void change(double x, double y){
-    	this.x = x;
-    	this.y = y;
+
+    public P2d sum(V2d v) {
+        x += v.x;
+        y += v.y;
+        return this;
+    }
+
+    public void change(double x, double y) {
+        this.x = x;
+        this.y = y;
     }
 
     public double getX() {
-    	return x;
+        return x;
     }
 
     public double getY() {
-    	return y;
+        return y;
     }
 
     @Override
     public String toString() {
-        return "P2d{" +
-                "x=" + x +
-                ", y=" + y +
-                '}';
+        return "P2d{" + "x=" + x + ", y=" + y + '}';
     }
 }

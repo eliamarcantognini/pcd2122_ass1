@@ -3,80 +3,164 @@ package concurrent.controller;
 import concurrent.model.*;
 import concurrent.view.View;
 
-import java.util.*;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 import java.util.concurrent.CyclicBarrier;
 
+/**
+ * Class that represents the main controller of the system. Its main responsibility is to manage the
+ * Agents of the system, which are represented by the class {@link BodyAgent}.
+ */
 public class Simulator {
 
-	private final Context context;
+    private final static int BODIES_INIT_WITHOUT_FILE = 500;
+    private final static int STEPS_INIT_WITHOUT_FILE = 5000;
+    private final static double DT_INIT_WITHOUT_FILE = 0.001;
+    private final static Boundary BOUNDARY_INIT_WITHOUT_FILE = new Boundary(-6, -6, 6, 6);
+    private final static String CONFIGURATION_FILE_NAME = "config.properties";
 
-	private final View viewer;
+    private final int cores;
+    private final CyclicBarrier cyclicBarrier;
+    private final View viewer;
+    private Context context;
+    private List<BodyAgent> agents;
+    private long nSteps;
+    /* bodies in the field */
+    private BodiesSharedList readSharedList;
+    private BodiesSharedList writeSharedList;
+    private double vt;
+    private long iter;
+    private int nBodies;
+    private boolean stopFromGUI = false;
+    private Configuration configuration;
 
-	/* bodies in the field */
-	List<Body> readBodies;
+    /**
+     * Create the controller and the shared elements in the system, which are the @Context and the CyclicBarrier used
+     * for synchronization.
+     *
+     * @param viewer - the view to be used to display the evolution of the simulation
+     */
+    public Simulator(View viewer) {
 
-	/* boundary of the field */
-	private long nSteps;
+        this.viewer = viewer;
+        this.readConfiguration(Simulator.CONFIGURATION_FILE_NAME);
+        this.cores = Runtime.getRuntime().availableProcessors();
+        this.cyclicBarrier = new CyclicBarrier(Math.min(this.nBodies, this.cores), () -> {
+            readSharedList.reset();
+            readSharedList.addBodies(writeSharedList.getBodies());
+            /* update virtual time */
+            vt = vt + this.context.getDT();
+            iter++;
+            /* display current stage */
+            viewer.display(readSharedList.getBodies(), vt, iter, context.getBoundary());
+            if (iter >= nSteps || stopFromGUI) {
+                context.setKeepWorking(false);
+                this.createContext(this.context.getBoundary(), this.context.getDT());
+                this.initSimulation();
+            }
+        });
+        this.initSimulation();
 
-	private final CyclicBarrier cyclicBarrier;
+    }
 
-	private SharedList sharedList;
+    /**
+     * Method to call when the simulation has to restart, for example when the button Start from the GUI is
+     * pressed. It also waits for the termination of the BodyAgents of the previous simulation, if any.
+     */
+    public void startSimulation() {
+        waitForAgentsToClose();
+        startAgents();
+        viewer.setStartEnabled(false);
+        viewer.setStopEnabled(true);
+    }
 
-	private double vt;
-	private long iter;
+    /**
+     * Method to call when the simulation has to stop, for example when the button Stop from the GUI is pressed.
+     */
+    public void stopSimulation() {
+        this.stopFromGUI = true;
+        viewer.setStopEnabled(false);
+    }
 
-	public Simulator(View viewer) {
+    protected void initConfigurationWithoutFile() {
+        this.viewer.showMessage("Configuration file not found. Simulation will be initialized with prefixed data: " + Simulator.BODIES_INIT_WITHOUT_FILE + " bodies and " + Simulator.STEPS_INIT_WITHOUT_FILE + " steps.");
+        this.context = new Context(Simulator.BOUNDARY_INIT_WITHOUT_FILE, Simulator.DT_INIT_WITHOUT_FILE);
+        this.nBodies = Simulator.BODIES_INIT_WITHOUT_FILE;
+        this.nSteps = Simulator.STEPS_INIT_WITHOUT_FILE;
+    }
 
-		this.context = new Context();
-		this.viewer = viewer;
-		int nBodies = 10;
-		readBodies = new ArrayList<>();
+    protected void readConfiguration(final String fileConfigurationName) {
+        try {
+            this.configuration = new Configuration(fileConfigurationName);
+            this.initConfigurationWithFile();
+        } catch (FileNotFoundException e) {
+            this.initConfigurationWithoutFile();
+        }
+    }
 
-		this.cyclicBarrier = new CyclicBarrier(nBodies, () -> {
-			this.readBodies = sharedList.getBodies();
+    private void initConfigurationWithFile() {
+        Boundary boundary = new Boundary(this.configuration.getLefterBoundary(), this.configuration.getUpperBoundary(), this.configuration.getRighterBoundary(), this.configuration.getLowerBoundary());
+        this.createContext(boundary, this.configuration.getDT());
+        this.nBodies = this.configuration.getBodiesQuantity();
+        this.nSteps = this.configuration.getIterationsQuantity();
+    }
 
-			/* update virtual time */
+    private void createContext(final Boundary boundary, final double dt) {
+        this.context = new Context(boundary, dt);
+    }
 
-			vt = vt + Context.DT;
-			iter++;
+    private void initSimulation() {
+        this.stopFromGUI = false;
+        this.agents = new ArrayList<>();
+        this.readSharedList = this.context.getReadSharedList();
+        this.writeSharedList = this.context.getWriteSharedList();
+        createBodies(this.nBodies);
+        this.vt = 0;
+        this.iter = 0;
+        createAgents();
+        viewer.setStopEnabled(false);
+        viewer.setStartEnabled(true);
+    }
 
-			/* display current stage */
+    private void createBodies(final int nBodies) {
+        List<Body> bodies = new ArrayList<>();
+        Random rand = new Random(System.currentTimeMillis());
+        for (int i = 0; i < nBodies; i++) {
+            double x = context.getBoundary().getX0() * 0.25 + rand.nextDouble() * (context.getBoundary().getX1() - context.getBoundary().getX0()) * 0.25;
+            double y = context.getBoundary().getY0() * 0.25 + rand.nextDouble() * (context.getBoundary().getY1() - context.getBoundary().getY0()) * 0.25;
+            Body b = new Body(i, new P2d(x, y), new V2d(0, 0), 10);
+            bodies.add(b);
+        }
+        readSharedList.addBodies(bodies);
+        writeSharedList.addBodies(readSharedList.getBodies());
+    }
 
-			viewer.display((ArrayList<Body>) readBodies, vt, iter, context.getBoundary());
-			if (iter >= nSteps)
-				context.setKeepWorking(false);
-		});
+    private void createAgents() {
+        int bodiesPerCore = nBodies / cores + 1;
+        for (int i = 0; i < nBodies; i += bodiesPerCore) {
+            createAgent(i, Math.min(nBodies, i + bodiesPerCore));
+        }
+    }
 
-		this.sharedList = new SharedList();
+    private void createAgent(final int startIndex, final int endIndex) {
+        agents.add(new BodyAgent(startIndex, endIndex, this.cyclicBarrier, this.context));
+    }
 
-		createBodies(nBodies);
-	}
-	
-	public void execute(long nSteps) {
+    private void startAgents() {
+        for (BodyAgent b : agents) {
+            b.start();
+        }
+    }
 
-		this.nSteps = nSteps;
-
-		/* init virtual time */
-
-		/* virtual time */
-		this.vt = 0;
-
-		this.iter = 0;
-
-		for (Body b: readBodies) {
-			new BodyAgent(b, this.readBodies, this.cyclicBarrier, this.sharedList, this.context).start();
-		}
-	}
-
-	private void createBodies(final int nBodies) {
-		Random rand = new Random(System.currentTimeMillis());
-		for (int i = 0; i < nBodies; i++) {
-			double x = context.getBoundary().getX0()*0.25 + rand.nextDouble() * (context.getBoundary().getX1() - context.getBoundary().getX0()) * 0.25;
-			double y = context.getBoundary().getY0()*0.25 + rand.nextDouble() * (context.getBoundary().getY1() - context.getBoundary().getY0()) * 0.25;
-			Body b = new Body(i, new P2d(x, y), new V2d(0, 0), 10);
-			readBodies.add(new Body(b));
-		}
-		sharedList.addBodies(readBodies);
-	}
-
+    private void waitForAgentsToClose() {
+        for (BodyAgent t : agents) {
+            try {
+                t.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }

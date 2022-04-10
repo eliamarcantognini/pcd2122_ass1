@@ -81,15 +81,16 @@ public class SimulationView implements View {
             getContentPane().setLayout(new BorderLayout());
             getContentPane().add(btnPanel, BorderLayout.NORTH);
             getContentPane().add(panel, BorderLayout.CENTER);
-            addWindowListener(new WindowAdapter() {
-                public void windowClosing(WindowEvent ev) {
-                    System.exit(-1);
-                }
-
-                public void windowClosed(WindowEvent ev) {
-                    System.exit(-1);
-                }
-            });
+//            addWindowListener(new WindowAdapter() {
+//                public void windowClosing(WindowEvent ev) {
+//                    System.exit(-1);
+//                }
+//
+//                public void windowClosed(WindowEvent ev) {
+//                    System.exit(-1);
+//                }
+//            });
+            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             this.addKeyListener(new KeyListener() {
                 @Override
                 public void keyTyped(KeyEvent e) {}

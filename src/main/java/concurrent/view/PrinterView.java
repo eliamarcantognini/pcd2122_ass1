@@ -11,22 +11,22 @@ import java.util.TimerTask;
 
 public class PrinterView implements View{
     @Override
-    public void display(List<Body> bodies, double vt, long iter, Boundary bounds) {
+    public void display(final List<Body> bodies, final double vt, final long iter, final Boundary bounds) {
         System.out.println(bodies);
     }
 
     @Override
-    public void setStopEnabled(Boolean enabled) {
+    public void setStopEnabled(final Boolean enabled) {
 
     }
 
     @Override
-    public void setStartEnabled(Boolean enabled) {
+    public void setStartEnabled(final Boolean enabled) {
 
     }
 
     @Override
-    public void addListener(ViewListener listener) {
+    public void addListener(final ViewListener listener) {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
@@ -34,4 +34,10 @@ public class PrinterView implements View{
             }
         }, 3000);
     }
+
+    @Override
+    public void showMessage(final String message) {
+        System.out.println("Alert: " + message);
+    }
+
 }

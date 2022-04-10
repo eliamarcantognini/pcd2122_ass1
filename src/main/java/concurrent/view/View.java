@@ -18,7 +18,7 @@ public interface View {
      * @param iter - the current iterazione to be displayed
      * @param bounds - the {@link Boundary} that indicate the 2D plan where the bodies can move
      */
-    void display(List<Body> bodies, double vt, long iter, Boundary bounds);
+    void display(final List<Body> bodies, final double vt, final long iter, final Boundary bounds);
 
     /**
      * Method called by the controller to say if it's possible to stop the simulation.
@@ -40,4 +40,11 @@ public interface View {
      * @param listener - the listener to notify when the event happen
      */
     void addListener(final ViewListener listener);
+
+    /**
+     * Show message passed as parameter.
+     *
+     * @param message - the message to show
+     */
+    void showMessage(final String message);
 }

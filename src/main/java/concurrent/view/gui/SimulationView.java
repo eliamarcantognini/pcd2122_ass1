@@ -29,25 +29,36 @@ public class SimulationView implements View {
      * @param h height
      */
     public SimulationView(int w, int h) {
-        frame = new VisualiserFrame(w, h);
+        this.frame = new VisualiserFrame(w, h);
     }
 
     @Override
-    public void display(List<Body> bodies, double vt, long iter, Boundary bounds) {
-        frame.display(bodies, vt, iter, bounds);
+    public void display(final List<Body> bodies, final double vt, final long iter, final Boundary bounds) {
+        this.frame.display(bodies, vt, iter, bounds);
     }
 
+    @Override
     public void setStopEnabled(final Boolean enabled){
         this.btnStop.setEnabled(enabled);
     }
 
+    @Override
     public void setStartEnabled(final Boolean enabled){
         this.btnStart.setEnabled(enabled);
     }
 
+    @Override
     public void addListener(final ViewListener listener) {
-        btnStart.addActionListener(e -> listener.eventPerformed(Commands.START));
-        btnStop.addActionListener(e -> listener.eventPerformed(Commands.STOP));
+        this.btnStart.addActionListener(e -> listener.eventPerformed(Commands.START));
+        this.btnStop.addActionListener(e -> listener.eventPerformed(Commands.STOP));
+    }
+
+    @Override
+    public void showMessage(final String message){
+        SwingUtilities.invokeLater(()-> {
+            JOptionPane.showInternalMessageDialog(this.frame.getContentPane(), message);
+            this.frame.repaintView();
+        });
     }
 
     public class VisualiserFrame extends JFrame {
@@ -58,7 +69,7 @@ public class SimulationView implements View {
             setTitle("Bodies Simulation");
             setSize(w, h);
             setResizable(false);
-            panel = new VisualiserPanel(w, h);
+            this.panel = new VisualiserPanel(w, h);
 
             JPanel btnPanel = new JPanel();
             btnPanel.setLayout(new FlowLayout());
@@ -111,7 +122,7 @@ public class SimulationView implements View {
         }
 
         public void updateScale(double k) {
-            panel.updateScale(k);
+            this.panel.updateScale(k);
         }
 
         public void repaintView(){

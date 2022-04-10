@@ -19,6 +19,7 @@ public class Simulator {
     private final static int STEPS_INIT_WITHOUT_FILE = 5000;
     private final static double DT_INIT_WITHOUT_FILE = 0.001;
     private final static Boundary BOUNDARY_INIT_WITHOUT_FILE = new Boundary(-6,-6,6,6);
+    private final static String CONFIGURATION_FILE_NAME = "config.properties";
 
     private final int cores;
     private final CyclicBarrier cyclicBarrier;
@@ -45,7 +46,7 @@ public class Simulator {
     public Simulator(View viewer) {
 
         this.viewer = viewer;
-        this.readConfiguration("config.properties");
+        this.readConfiguration(Simulator.CONFIGURATION_FILE_NAME);
         this.cores = Runtime.getRuntime().availableProcessors();
         this.cyclicBarrier = new CyclicBarrier(Math.min(this.nBodies, this.cores), () -> {
             readSharedList.reset();
@@ -84,9 +85,9 @@ public class Simulator {
     }
 
     protected void initConfigurationWithoutFile() {
-//        this.viewer.showAlert("Configuration file not found. Simulation will be initialized with prefixed data: "
-//                + Simulator.BODIES_INIT_WITHOUT_FILE + " bodies and "
-//                + Simulator.STEPS_INIT_WITHOUT_FILE + " steps.");
+        this.viewer.showMessage("Configuration file not found. Simulation will be initialized with prefixed data: "
+                + Simulator.BODIES_INIT_WITHOUT_FILE + " bodies and "
+                + Simulator.STEPS_INIT_WITHOUT_FILE + " steps.");
         this.context = new Context(Simulator.BOUNDARY_INIT_WITHOUT_FILE,Simulator.DT_INIT_WITHOUT_FILE);
         this.nBodies = Simulator.BODIES_INIT_WITHOUT_FILE;
         this.nSteps = Simulator.STEPS_INIT_WITHOUT_FILE;
@@ -127,7 +128,6 @@ public class Simulator {
         createAgents();
         viewer.setStopEnabled(false);
         viewer.setStartEnabled(true);
-        System.out.println("Init finished");
     }
 
     private void createBodies(final int nBodies) {

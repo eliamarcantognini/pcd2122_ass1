@@ -63,13 +63,7 @@ public class SimulationView implements View {
             JPanel btnPanel = new JPanel();
             btnPanel.setLayout(new FlowLayout());
             btnStart = new JButton("START");
-            btnStart.setActionCommand("start");
-            /*
-            * TODO: Vogliamo utilizzare delle stringhe predefinite in modo che non possano insorgere errori perché dei caratteri non sono simili?
-            *  Quindi ad esempio GUIListener.stopcommand?
-            */
             btnStop = new JButton("STOP");
-            btnStop.setActionCommand("stop");
             btnPanel.add(btnStart);
             btnPanel.add(btnStop);
 

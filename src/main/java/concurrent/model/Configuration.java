@@ -35,12 +35,12 @@ public class Configuration {
      */
     public Configuration(final String fileName) throws FileNotFoundException {
         this.properties = new Properties();
-        String pathForProject = new File("src/main/resources/"+fileName)
+        String pathForProject = new File("src/main/resources/" + fileName)
                 .getAbsolutePath();
         File configurationFile = new File(pathForProject);
         File configurationFileJar = new File(fileName);
         FileInputStream inputStream;
-        if(configurationFile.exists()){
+        if (configurationFile.exists()) {
             inputStream = new FileInputStream(configurationFile);
         } else {
             inputStream = new FileInputStream(configurationFileJar);
@@ -58,7 +58,7 @@ public class Configuration {
      *
      * @return deltaT, that is quantity time added to virtual time each iteration
      */
-    public double getDT(){
+    public double getDT() {
         return Double.parseDouble(this.properties.getProperty(Configuration.DT_FIELD_NAME));
     }
 
@@ -67,7 +67,7 @@ public class Configuration {
      *
      * @return the number of bodies for the simulation
      */
-    public int getBodiesQuantity(){
+    public int getBodiesQuantity() {
         return Integer.parseInt(this.properties.getProperty(Configuration.BODIES_QUANTITY_FIELD_NAME));
     }
 
@@ -77,7 +77,7 @@ public class Configuration {
      *
      * @return the number of total iteration that simulation should do
      */
-    public int getIterationsQuantity(){
+    public int getIterationsQuantity() {
         return Integer.parseInt(this.properties.getProperty(Configuration.ITERATIONS_QUANTITY_FIELD_NAME));
     }
 
@@ -86,7 +86,7 @@ public class Configuration {
      *
      * @return the upper boundary of two-dimensional world of simulation
      */
-    public int getUpperBoundary(){
+    public int getUpperBoundary() {
         return Integer.parseInt(this.properties.getProperty(Configuration.UPPER_BOUNDARY_FIELD_NAME));
     }
 
@@ -95,7 +95,7 @@ public class Configuration {
      *
      * @return the lower boundary of two-dimensional world of simulation
      */
-    public int getLowerBoundary(){
+    public int getLowerBoundary() {
         return Integer.parseInt(this.properties.getProperty(Configuration.LOWER_BOUNDARY_FIELD_NAME));
     }
 
@@ -104,7 +104,7 @@ public class Configuration {
      *
      * @return the righter boundary of two-dimensional world of simulation
      */
-    public int getRighterBoundary(){
+    public int getRighterBoundary() {
         return Integer.parseInt(this.properties.getProperty(Configuration.RIGHTER_BOUNDARY_FIELD_NAME));
     }
 
@@ -113,7 +113,7 @@ public class Configuration {
      *
      * @return the lefter boundary of two-dimensional world of simulation
      */
-    public int getLefterBoundary(){
+    public int getLefterBoundary() {
         return Integer.parseInt(this.properties.getProperty(Configuration.LEFTER_BOUNDARY_FIELD_NAME));
     }
 

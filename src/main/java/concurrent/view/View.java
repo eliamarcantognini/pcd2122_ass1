@@ -14,8 +14,8 @@ public interface View {
      * Display the system status in some way.
      *
      * @param bodies - the list of bodies to show
-     * @param vt - the virtual time passed since the beginning of the simulation
-     * @param iter - the current iterazione to be displayed
+     * @param vt     - the virtual time passed since the beginning of the simulation
+     * @param iter   - the current iterazione to be displayed
      * @param bounds - the {@link Boundary} that indicate the 2D plan where the bodies can move
      */
     void display(final List<Body> bodies, final double vt, final long iter, final Boundary bounds);

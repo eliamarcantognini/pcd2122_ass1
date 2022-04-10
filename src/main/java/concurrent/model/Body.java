@@ -1,9 +1,8 @@
 package concurrent.model;
 
 
-/*
+/**
  * This class represents a body
- *
  */
 public class Body {
 

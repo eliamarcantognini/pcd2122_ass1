@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class PrinterView implements View{
+public class PrinterView implements View {
     @Override
     public void display(final List<Body> bodies, final double vt, final long iter, final Boundary bounds) {
         System.out.println(bodies);
@@ -17,12 +17,10 @@ public class PrinterView implements View{
 
     @Override
     public void setStopEnabled(final Boolean enabled) {
-
     }
 
     @Override
     public void setStartEnabled(final Boolean enabled) {
-
     }
 
     @Override

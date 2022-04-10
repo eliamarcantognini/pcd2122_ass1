@@ -7,9 +7,10 @@ import concurrent.model.Commands;
 import concurrent.view.View;
 
 import javax.swing.*;
-import java.util.List;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.List;
 
 /**
  * Simulation view
@@ -42,12 +43,12 @@ public class GUIView implements View {
     }
 
     @Override
-    public void setStopEnabled(final Boolean enabled){
+    public void setStopEnabled(final Boolean enabled) {
         this.btnStop.setEnabled(enabled);
     }
 
     @Override
-    public void setStartEnabled(final Boolean enabled){
+    public void setStartEnabled(final Boolean enabled) {
         this.btnStart.setEnabled(enabled);
     }
 
@@ -58,8 +59,8 @@ public class GUIView implements View {
     }
 
     @Override
-    public void showMessage(final String message){
-        SwingUtilities.invokeLater(()-> {
+    public void showMessage(final String message) {
+        SwingUtilities.invokeLater(() -> {
             JOptionPane.showInternalMessageDialog(this.frame.getContentPane(), message);
             this.frame.repaintView();
         });
@@ -97,7 +98,9 @@ public class GUIView implements View {
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             this.addKeyListener(new KeyListener() {
                 @Override
-                public void keyTyped(KeyEvent e) {}
+                public void keyTyped(KeyEvent e) {
+                }
+
                 @Override
                 public void keyPressed(KeyEvent e) {
                     if (e.getKeyCode() == KEY_UP) {
@@ -108,8 +111,10 @@ public class GUIView implements View {
                         SwingUtilities.invokeLater(frame::repaintView);
                     }
                 }
+
                 @Override
-                public void keyReleased(KeyEvent e) {}
+                public void keyReleased(KeyEvent e) {
+                }
             });
             this.setVisible(true);
         }
@@ -130,7 +135,7 @@ public class GUIView implements View {
             this.panel.updateScale(k);
         }
 
-        public void repaintView(){
+        public void repaintView() {
             setFocusable(true);
             setFocusTraversalKeysEnabled(false);
             requestFocusInWindow();

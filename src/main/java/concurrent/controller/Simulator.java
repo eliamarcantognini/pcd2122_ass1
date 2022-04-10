@@ -18,22 +18,21 @@ public class Simulator {
     private final static int BODIES_INIT_WITHOUT_FILE = 500;
     private final static int STEPS_INIT_WITHOUT_FILE = 5000;
     private final static double DT_INIT_WITHOUT_FILE = 0.001;
-    private final static Boundary BOUNDARY_INIT_WITHOUT_FILE = new Boundary(-6,-6,6,6);
+    private final static Boundary BOUNDARY_INIT_WITHOUT_FILE = new Boundary(-6, -6, 6, 6);
     private final static String CONFIGURATION_FILE_NAME = "config.properties";
 
     private final int cores;
     private final CyclicBarrier cyclicBarrier;
+    private final View viewer;
     private Context context;
     private List<BodyAgent> agents;
     private long nSteps;
     /* bodies in the field */
     private BodiesSharedList readSharedList;
     private BodiesSharedList writeSharedList;
-
     private double vt;
     private long iter;
     private int nBodies;
-    private final View viewer;
     private boolean stopFromGUI = false;
     private Configuration configuration;
 
@@ -86,16 +85,13 @@ public class Simulator {
     }
 
     protected void initConfigurationWithoutFile() {
-        this.viewer.showMessage("Configuration file not found. Simulation will be initialized with prefixed data: "
-                + Simulator.BODIES_INIT_WITHOUT_FILE + " bodies and "
-                + Simulator.STEPS_INIT_WITHOUT_FILE + " steps.");
-        this.context = new Context(Simulator.BOUNDARY_INIT_WITHOUT_FILE,Simulator.DT_INIT_WITHOUT_FILE);
+        this.viewer.showMessage("Configuration file not found. Simulation will be initialized with prefixed data: " + Simulator.BODIES_INIT_WITHOUT_FILE + " bodies and " + Simulator.STEPS_INIT_WITHOUT_FILE + " steps.");
+        this.context = new Context(Simulator.BOUNDARY_INIT_WITHOUT_FILE, Simulator.DT_INIT_WITHOUT_FILE);
         this.nBodies = Simulator.BODIES_INIT_WITHOUT_FILE;
         this.nSteps = Simulator.STEPS_INIT_WITHOUT_FILE;
     }
 
-
-    protected void readConfiguration(final String fileConfigurationName){
+    protected void readConfiguration(final String fileConfigurationName) {
         try {
             this.configuration = new Configuration(fileConfigurationName);
             this.initConfigurationWithFile();
@@ -104,18 +100,15 @@ public class Simulator {
         }
     }
 
-    private void initConfigurationWithFile(){
-        Boundary boundary = new Boundary(this.configuration.getLefterBoundary(),
-            this.configuration.getUpperBoundary(),
-            this.configuration.getRighterBoundary(),
-            this.configuration.getLowerBoundary());
-        this.createContext(boundary,this.configuration.getDT());
+    private void initConfigurationWithFile() {
+        Boundary boundary = new Boundary(this.configuration.getLefterBoundary(), this.configuration.getUpperBoundary(), this.configuration.getRighterBoundary(), this.configuration.getLowerBoundary());
+        this.createContext(boundary, this.configuration.getDT());
         this.nBodies = this.configuration.getBodiesQuantity();
         this.nSteps = this.configuration.getIterationsQuantity();
     }
 
-    private void createContext(final Boundary boundary, final double dt){
-        this.context = new Context(boundary,dt);
+    private void createContext(final Boundary boundary, final double dt) {
+        this.context = new Context(boundary, dt);
     }
 
     private void initSimulation() {
@@ -145,9 +138,9 @@ public class Simulator {
     }
 
     private void createAgents() {
-        int bodiesPerCore = nBodies / cores+1;
-        for(int i = 0; i < nBodies; i += bodiesPerCore) {
-            createAgent(i, Math.min(nBodies, i+bodiesPerCore));
+        int bodiesPerCore = nBodies / cores + 1;
+        for (int i = 0; i < nBodies; i += bodiesPerCore) {
+            createAgent(i, Math.min(nBodies, i + bodiesPerCore));
         }
     }
 
@@ -162,7 +155,7 @@ public class Simulator {
     }
 
     private void waitForAgentsToClose() {
-        for (BodyAgent t: agents) {
+        for (BodyAgent t : agents) {
             try {
                 t.join();
             } catch (InterruptedException e) {

@@ -10,15 +10,13 @@ import java.util.List;
 
 public class VisualiserPanel extends JPanel {
 
+    private final long dx;
+    private final long dy;
     private List<Body> bodies;
     private Boundary bounds;
-
     private long nIter;
     private double vt;
     private double scale = 1;
-
-    private final long dx;
-    private final long dy;
 
     public VisualiserPanel(int w, int h) {
         setSize(w, h);
@@ -33,10 +31,8 @@ public class VisualiserPanel extends JPanel {
         if (bodies != null) {
             Graphics2D g2 = (Graphics2D) g;
 
-            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                    RenderingHints.VALUE_ANTIALIAS_ON);
-            g2.setRenderingHint(RenderingHints.KEY_RENDERING,
-                    RenderingHints.VALUE_RENDER_QUALITY);
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
             g2.clearRect(0, 0, this.getWidth(), this.getHeight());
 
 

@@ -27,10 +27,10 @@ public class BodyAgent extends Thread {
      * computation. The indexes are used to indicate the bodies the Agent has to manage, which are contained in the
      * shared list of the {@link Context}
      *
-     * @param startIndex - index of the first body that the Agent has to manage
-     * @param endIndex - index of the last body that the Agent has to manage
+     * @param startIndex    - index of the first body that the Agent has to manage
+     * @param endIndex      - index of the last body that the Agent has to manage
      * @param cyclicBarrier - the barrier where the Agents wait for the other to finish their computation
-     * @param context - context of the system used to recover the shared list of bodies
+     * @param context       - context of the system used to recover the shared list of bodies
      */
     public BodyAgent(int startIndex, int endIndex, final CyclicBarrier cyclicBarrier, final Context context) {
         super.setName("BodyAgent" + startIndex);

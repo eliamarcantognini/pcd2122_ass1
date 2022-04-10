@@ -35,9 +35,6 @@ public class P2d {
 
     @Override
     public String toString() {
-        return "P2d{" +
-                "x=" + x +
-                ", y=" + y +
-                '}';
+        return "P2d{" + "x=" + x + ", y=" + y + '}';
     }
 }

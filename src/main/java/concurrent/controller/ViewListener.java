@@ -1,7 +1,8 @@
 package concurrent.controller;
 
-import java.util.EventListener;
 import concurrent.model.Commands;
+
+import java.util.EventListener;
 
 public class ViewListener implements EventListener {
 

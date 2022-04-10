@@ -3,6 +3,7 @@ package concurrent.view;
 import concurrent.controller.ViewListener;
 import concurrent.model.Body;
 import concurrent.model.Boundary;
+import concurrent.model.Commands;
 
 import java.util.List;
 import java.util.Timer;
@@ -29,7 +30,7 @@ public class PrinterView implements View{
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                listener.eventPerformed("start");
+                listener.eventPerformed(Commands.START);
             }
         }, 3000);
     }

@@ -3,6 +3,7 @@ package concurrent.view.gui;
 import concurrent.controller.ViewListener;
 import concurrent.model.Body;
 import concurrent.model.Boundary;
+import concurrent.model.Commands;
 import concurrent.view.View;
 
 import javax.swing.*;
@@ -45,8 +46,8 @@ public class SimulationView implements View {
     }
 
     public void addListener(final ViewListener listener) {
-        btnStart.addActionListener(e -> listener.eventPerformed(e.getActionCommand()));
-        btnStop.addActionListener(e -> listener.eventPerformed(e.getActionCommand()));
+        btnStart.addActionListener(e -> listener.eventPerformed(Commands.START));
+        btnStop.addActionListener(e -> listener.eventPerformed(Commands.STOP));
     }
 
     public class VisualiserFrame extends JFrame {

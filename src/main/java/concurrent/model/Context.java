@@ -10,15 +10,20 @@ package concurrent.model;
 
 public class Context {
 
-    public final static double DT = 0.001;
-
-    private Boundary boundary;
+//    public final static double DT = 0.001;
+    private final double dt;
+    private final Boundary boundary;
+    private BodiesSharedList writeSharedList;
+    private BodiesSharedList readSharedList;
     private boolean keepWorking;
-    private final BodiesSharedList writeSharedList;
-    private final BodiesSharedList readSharedList;
 
-    public Context() {
-        this.boundary = new Boundary(-6.0, -6.0, 6.0, 6.0);
+    public Context(final Boundary boundary, final double dt) {
+        this.boundary = boundary;
+        this.dt = dt;
+        this.restartContext();
+    }
+
+    public void restartContext(){
         this.keepWorking = true;
         this.writeSharedList = new BodiesSharedList();
         this.readSharedList = new BodiesSharedList();
@@ -26,10 +31,6 @@ public class Context {
 
     public Boundary getBoundary() {
         return boundary;
-    }
-
-    public void setBoundary(Boundary boundary) {
-        this.boundary = boundary;
     }
 
     public boolean isKeepWorking() {
@@ -46,6 +47,10 @@ public class Context {
 
     public BodiesSharedList getReadSharedList() {
         return readSharedList;
+    }
+
+    public double getDT(){
+        return this.dt;
     }
 
 //    public void resetWriteSharedList() { this.writeSharedList = new BodiesSharedList();}

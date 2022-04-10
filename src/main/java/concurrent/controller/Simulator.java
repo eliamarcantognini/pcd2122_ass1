@@ -3,6 +3,7 @@ package concurrent.controller;
 import concurrent.model.*;
 import concurrent.view.View;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -14,20 +15,26 @@ import java.util.concurrent.CyclicBarrier;
  */
 public class Simulator {
 
+    private final static int BODIES_INIT_WITHOUT_FILE = 500;
+    private final static int STEPS_INIT_WITHOUT_FILE = 5000;
+    private final static double DT_INIT_WITHOUT_FILE = 0.001;
+    private final static Boundary BOUNDARY_INIT_WITHOUT_FILE = new Boundary(-6,-6,6,6);
+
     private final int cores;
     private final CyclicBarrier cyclicBarrier;
     private Context context;
     private List<BodyAgent> agents;
-    private final long nSteps;
+    private long nSteps;
     /* bodies in the field */
     private BodiesSharedList readSharedList;
     private BodiesSharedList writeSharedList;
 
     private double vt;
     private long iter;
-    private final int nBodies;
+    private int nBodies;
     private final View viewer;
     private boolean stopFromGUI = false;
+    private Configuration configuration;
 
     /**
      * Create the controller and the shared elements in the system, which are the @Context and the CyclicBarrier used
@@ -37,26 +44,24 @@ public class Simulator {
      */
     public Simulator(View viewer) {
 
-        this.nBodies = 10;
-        this.nSteps = 5000;
-        this.cores = Runtime.getRuntime().availableProcessors();
         this.viewer = viewer;
-
+        this.readConfiguration("config.properties");
+        this.cores = Runtime.getRuntime().availableProcessors();
         this.cyclicBarrier = new CyclicBarrier(Math.min(this.nBodies, this.cores), () -> {
             readSharedList.reset();
             readSharedList.addBodies(writeSharedList.getBodies());
             /* update virtual time */
-            vt = vt + Context.DT;
+            vt = vt + this.context.getDT();
             iter++;
             /* display current stage */
             viewer.display(readSharedList.getBodies(), vt, iter, context.getBoundary());
             if (iter >= nSteps || stopFromGUI) {
                 context.setKeepWorking(false);
-                initSimulation();
+                this.createContext(this.context.getBoundary(), this.context.getDT());
+                this.initSimulation();
             }
         });
-
-        initSimulation();
+        this.initSimulation();
 
     }
 
@@ -78,9 +83,41 @@ public class Simulator {
         viewer.setStopEnabled(false);
     }
 
+    protected void initConfigurationWithoutFile() {
+//        this.viewer.showAlert("Configuration file not found. Simulation will be initialized with prefixed data: "
+//                + Simulator.BODIES_INIT_WITHOUT_FILE + " bodies and "
+//                + Simulator.STEPS_INIT_WITHOUT_FILE + " steps.");
+        this.context = new Context(Simulator.BOUNDARY_INIT_WITHOUT_FILE,Simulator.DT_INIT_WITHOUT_FILE);
+        this.nBodies = Simulator.BODIES_INIT_WITHOUT_FILE;
+        this.nSteps = Simulator.STEPS_INIT_WITHOUT_FILE;
+    }
+
+
+    protected void readConfiguration(final String fileConfigurationName){
+        try {
+            this.configuration = new Configuration(fileConfigurationName);
+            this.initConfigurationWithFile();
+        } catch (FileNotFoundException e) {
+            this.initConfigurationWithoutFile();
+        }
+    }
+
+    private void initConfigurationWithFile(){
+        Boundary boundary = new Boundary(this.configuration.getLefterBoundary(),
+            this.configuration.getUpperBoundary(),
+            this.configuration.getRighterBoundary(),
+            this.configuration.getLowerBoundary());
+        this.createContext(boundary,this.configuration.getDT());
+        this.nBodies = this.configuration.getBodiesQuantity();
+        this.nSteps = this.configuration.getIterationsQuantity();
+    }
+
+    private void createContext(final Boundary boundary, final double dt){
+        this.context = new Context(boundary,dt);
+    }
+
     private void initSimulation() {
         this.stopFromGUI = false;
-        this.context = new Context();
         this.agents = new ArrayList<>();
         this.readSharedList = this.context.getReadSharedList();
         this.writeSharedList = this.context.getWriteSharedList();
@@ -90,6 +127,7 @@ public class Simulator {
         createAgents();
         viewer.setStopEnabled(false);
         viewer.setStartEnabled(true);
+        System.out.println("Init finished");
     }
 
     private void createBodies(final int nBodies) {

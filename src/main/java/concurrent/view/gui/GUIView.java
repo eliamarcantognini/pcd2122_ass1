@@ -16,7 +16,7 @@ import java.awt.event.*;
  *
  * @author aricci
  */
-public class SimulationView implements View {
+public class GUIView implements View {
 
     public static final int KEY_UP = 38;
     public static final int KEY_DOWN = 40;
@@ -32,7 +32,7 @@ public class SimulationView implements View {
      * @param w width
      * @param h height
      */
-    public SimulationView(int w, int h) {
+    public GUIView(int w, int h) {
         this.frame = new VisualiserFrame(w, h);
     }
 

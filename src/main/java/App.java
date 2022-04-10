@@ -1,4 +1,4 @@
-import concurrent.controller.GUIListener;
+import concurrent.controller.ViewListener;
 import concurrent.controller.Simulator;
 import concurrent.view.PrinterView;
 import concurrent.view.View;
@@ -20,6 +20,6 @@ public class App {
         View viewer = new PrinterView();
 
         Simulator sim = new Simulator(viewer);
-        viewer.addListener(new GUIListener(sim));
+        viewer.addListener(new ViewListener(sim));
     }
 }

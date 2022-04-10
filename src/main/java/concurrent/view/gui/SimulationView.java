@@ -1,6 +1,6 @@
 package concurrent.view.gui;
 
-import concurrent.controller.GUIListener;
+import concurrent.controller.ViewListener;
 import concurrent.model.Body;
 import concurrent.model.Boundary;
 import concurrent.view.View;
@@ -44,7 +44,7 @@ public class SimulationView implements View {
         this.btnStart.setEnabled(enabled);
     }
 
-    public void addListener(final GUIListener listener) {
+    public void addListener(final ViewListener listener) {
         btnStart.addActionListener(e -> listener.eventPerformed(e.getActionCommand()));
         btnStop.addActionListener(e -> listener.eventPerformed(e.getActionCommand()));
     }

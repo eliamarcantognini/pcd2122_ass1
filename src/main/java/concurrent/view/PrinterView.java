@@ -1,6 +1,6 @@
 package concurrent.view;
 
-import concurrent.controller.GUIListener;
+import concurrent.controller.ViewListener;
 import concurrent.model.Body;
 import concurrent.model.Boundary;
 
@@ -25,7 +25,7 @@ public class PrinterView implements View{
     }
 
     @Override
-    public void addListener(GUIListener listener) {
+    public void addListener(ViewListener listener) {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {

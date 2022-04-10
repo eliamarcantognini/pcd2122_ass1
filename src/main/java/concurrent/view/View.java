@@ -1,10 +1,9 @@
 package concurrent.view;
 
-import concurrent.controller.GUIListener;
+import concurrent.controller.ViewListener;
 import concurrent.model.Body;
 import concurrent.model.Boundary;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -36,9 +35,9 @@ public interface View {
     void setStartEnabled(final Boolean enabled);
 
     /**
-     * Method called to set a {@link GUIListener} to respond to certain event.
+     * Method called to set a {@link ViewListener} to respond to certain event.
      *
      * @param listener - the listener to notify when the event happen
      */
-    void addListener(final GUIListener listener);
+    void addListener(final ViewListener listener);
 }

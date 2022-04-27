@@ -12,7 +12,7 @@ import java.util.TimerTask;
 public class PrinterView implements View {
     @Override
     public void display(final List<Body> bodies, final double vt, final long iter, final Boundary bounds) {
-        System.out.println(bodies);
+//        System.out.println(bodies);
     }
 
     @Override
@@ -30,7 +30,7 @@ public class PrinterView implements View {
             public void run() {
                 listener.eventPerformed(Commands.START);
             }
-        }, 3000);
+        }, 0);
     }
 
     @Override

@@ -34,7 +34,6 @@ public class BodyService extends Thread {
     @Override
     public void run() {
         for (int iter = 0; iter < nSteps && !stopFromGUI; iter++){
-            System.out.println(iter);
             for (Body b: readSharedList.getBodies()) {
                 executor.execute(new UpdateTask(b, this.context, this.monitor));
             }

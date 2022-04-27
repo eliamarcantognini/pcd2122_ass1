@@ -21,11 +21,11 @@ public class Simulator {
     private final static Boundary BOUNDARY_INIT_WITHOUT_FILE = new Boundary(-6, -6, 6, 6);
     private final static String CONFIGURATION_FILE_NAME = "config.properties";
 
-    private final int cores;
-    private final CyclicBarrier cyclicBarrier;
+//    private final int cores;
+//    private CyclicBarrier cyclicBarrier;
     private final View viewer;
     private Context context;
-    private List<BodyAgent> agents;
+//    private List<BodyAgent> agents;
     private long nSteps;
     /* bodies in the field */
     private BodiesSharedList readSharedList;
@@ -46,23 +46,27 @@ public class Simulator {
 
         this.viewer = viewer;
         this.readConfiguration(Simulator.CONFIGURATION_FILE_NAME);
-        this.cores = Runtime.getRuntime().availableProcessors();
-        this.cyclicBarrier = new CyclicBarrier(Math.min(this.nBodies, this.cores), () -> {
-            readSharedList.reset();
-            readSharedList.addBodies(writeSharedList.getBodies());
-            /* update virtual time */
-            vt = vt + this.context.getDT();
-            iter++;
-            /* display current stage */
-            viewer.display(readSharedList.getBodies(), vt, iter, context.getBoundary());
-            if (iter >= nSteps || stopFromGUI) {
-                context.setKeepWorking(false);
-                this.createContext(this.context.getBoundary(), this.context.getDT());
-                this.initSimulation();
-            }
-        });
+//        this.cores = Runtime.getRuntime().availableProcessors();
+//        this.cyclicBarrier = new CyclicBarrier(Math.min(this.nBodies, this.cores), () -> {
+//            updateSimulation(viewer);
+//            if (iter >= nSteps || stopFromGUI) {
+//                context.setKeepWorking(false);
+//                this.createContext(this.context.getBoundary(), this.context.getDT());
+//                this.initSimulation();
+//            }
+//        });
         this.initSimulation();
+        this.viewer.display(readSharedList.getBodies(), vt, iter, context.getBoundary());
+    }
 
+    protected void updateSimulation() {
+        readSharedList.reset();
+        readSharedList.addBodies(writeSharedList.getBodies());
+        /* update virtual time */
+        vt = vt + this.context.getDT();
+        iter++;
+        /* display current stage */
+        this.viewer.display(readSharedList.getBodies(), vt, iter, context.getBoundary());
     }
 
     /**
@@ -70,8 +74,10 @@ public class Simulator {
      * pressed. It also waits for the termination of the BodyAgents of the previous simulation, if any.
      */
     public void startSimulation() {
-        waitForAgentsToClose();
-        startAgents();
+//        waitForAgentsToClose();
+//        startAgents();
+        Thread t = new BodyService(nSteps, context, this);
+        t.start();
         viewer.setStartEnabled(false);
         viewer.setStopEnabled(true);
     }
@@ -111,15 +117,16 @@ public class Simulator {
         this.context = new Context(boundary, dt);
     }
 
-    private void initSimulation() {
+    protected void initSimulation() {
+        this.context.restartContext();
         this.stopFromGUI = false;
-        this.agents = new ArrayList<>();
+//        this.agents = new ArrayList<>();
         this.readSharedList = this.context.getReadSharedList();
         this.writeSharedList = this.context.getWriteSharedList();
         createBodies(this.nBodies);
         this.vt = 0;
         this.iter = 0;
-        createAgents();
+//        createAgents();
         viewer.setStopEnabled(false);
         viewer.setStartEnabled(true);
     }
@@ -137,30 +144,30 @@ public class Simulator {
         writeSharedList.addBodies(readSharedList.getBodies());
     }
 
-    private void createAgents() {
-        int bodiesPerCore = nBodies / cores + 1;
-        for (int i = 0; i < nBodies; i += bodiesPerCore) {
-            createAgent(i, Math.min(nBodies, i + bodiesPerCore));
-        }
-    }
-
-    private void createAgent(final int startIndex, final int endIndex) {
-        agents.add(new BodyAgent(startIndex, endIndex, this.cyclicBarrier, this.context));
-    }
-
-    private void startAgents() {
-        for (BodyAgent b : agents) {
-            b.start();
-        }
-    }
-
-    private void waitForAgentsToClose() {
-        for (BodyAgent t : agents) {
-            try {
-                t.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
+//    private void createAgents() {
+//        int bodiesPerCore = nBodies / cores + 1;
+//        for (int i = 0; i < nBodies; i += bodiesPerCore) {
+//            createAgent(i, Math.min(nBodies, i + bodiesPerCore));
+//        }
+//    }
+//
+//    private void createAgent(final int startIndex, final int endIndex) {
+//        agents.add(new BodyAgent(startIndex, endIndex, this.cyclicBarrier, this.context));
+//    }
+//
+//    private void startAgents() {
+//        for (BodyAgent b : agents) {
+//            b.start();
+//        }
+//    }
+//
+//    private void waitForAgentsToClose() {
+//        for (BodyAgent t : agents) {
+//            try {
+//                t.join();
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//    }
 }

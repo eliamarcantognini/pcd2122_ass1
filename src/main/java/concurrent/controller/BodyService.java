@@ -1,9 +1,6 @@
 package concurrent.controller;
 
-import concurrent.model.BodiesSharedList;
-import concurrent.model.Body;
-import concurrent.model.Context;
-import concurrent.model.UpdateTask;
+import concurrent.model.*;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -19,6 +16,7 @@ public class BodyService extends Thread {
     private BodiesSharedList writeSharedList;
     private Context context;
     private Simulator simulator;
+    private Monitor monitor;
 
     public BodyService(long nSteps, Context context, Simulator simulator) {
         this.executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()+1);
@@ -27,6 +25,7 @@ public class BodyService extends Thread {
         this.readSharedList = context.getReadSharedList();
         this.writeSharedList = context.getWriteSharedList();
         this.simulator = simulator;
+        this.monitor = new Monitor(readSharedList.getBodies().size());
         this.stopFromGUI = false;
     }
 
@@ -34,13 +33,17 @@ public class BodyService extends Thread {
 
     @Override
     public void run() {
-        System.out.println("Sono Service, vado!");
-        for (int iter = 0; iter <= nSteps || !stopFromGUI; iter++){
+        for (int iter = 0; iter < nSteps && !stopFromGUI; iter++){
+            System.out.println(iter);
             for (Body b: readSharedList.getBodies()) {
-                System.out.println("faccio un body");
-                executor.execute(new UpdateTask(b, this.context));
+                executor.execute(new UpdateTask(b, this.context, this.monitor));
             }
-            //monitor.wait(); Aspettare la fine di tutti i task tramite un monitor
+            try {
+                monitor.awaitCompletion();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            monitor.reset();
             simulator.updateSimulation();
         }
         simulator.initSimulation();

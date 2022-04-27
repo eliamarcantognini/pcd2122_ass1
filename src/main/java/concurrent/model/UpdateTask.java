@@ -6,17 +6,18 @@ public class UpdateTask implements Runnable {
     private final BodiesSharedList readSharedList;
     private final BodiesSharedList writeSharedList;
     private final Context context;
+    private final Monitor monitor;
 
-    public UpdateTask(Body body, Context context) {
+    public UpdateTask(Body body, Context context, Monitor monitor) {
         this.body = new Body(body);
         this.context = context;
         this.readSharedList = this.context.getReadSharedList();
         this.writeSharedList = this.context.getWriteSharedList();
+        this.monitor = monitor;
     }
 
     @Override
     public void run() {
-        System.out.println("Sono task, mi faccio i conti");
         /* compute total force on bodies */
         V2d totalForce = computeTotalForceOnBody(body);
         /* compute instant acceleration */
@@ -26,7 +27,7 @@ public class UpdateTask implements Runnable {
         body.updatePos(this.context.getDT());
         body.checkAndSolveBoundaryCollision(context.getBoundary());
         writeSharedList.updateBody(body);
-        System.out.println("sono task, ho fatto i conti");
+        monitor.countMeIn();
     }
 
     private V2d computeTotalForceOnBody(Body body) {

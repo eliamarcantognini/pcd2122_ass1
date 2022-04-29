@@ -12,7 +12,7 @@ import java.util.concurrent.Executors;
 
 /**
  * Class that represents the main controller of the system. Its main responsibility is to manage the
- * Agents of the system, which are represented by the class {@link BodyAgent}.
+ * Tasks of the system, which are represented by the class {@link UpdateTask}.
  */
 public class Simulator {
 

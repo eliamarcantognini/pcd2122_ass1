@@ -65,8 +65,8 @@ public class Simulator {
     }
 
     public void exec() {
+        TaskSyncMonitor taskSyncMonitor = new TaskSyncMonitor(readSharedList.getBodies().size());
         while (true) {
-            TaskSyncMonitor taskSyncMonitor = new TaskSyncMonitor(readSharedList.getBodies().size());
             try {
                 this.syncMonitor.waitBegin();
             } catch (InterruptedException e) {

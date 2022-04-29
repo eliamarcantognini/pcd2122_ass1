@@ -1,11 +1,11 @@
 package concurrent.model;
 
-public class Monitor {
+public class TaskSyncMonitor {
 
     private final long bodyToWait;
     private long counter = 0;
 
-    public Monitor(long bodyToWait) {
+    public TaskSyncMonitor(long bodyToWait) {
         this.bodyToWait = bodyToWait;
     }
 

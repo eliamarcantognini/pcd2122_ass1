@@ -13,7 +13,6 @@ public class Context {
 
     private final double dt;
     private final Boundary boundary;
-    private boolean keepWorking;
     private BodiesSharedList writeSharedList;
     private BodiesSharedList readSharedList;
 
@@ -33,7 +32,6 @@ public class Context {
      * Restart context reinitializing lists and keepWorking flag
      */
     public void restartContext() {
-        this.keepWorking = true;
         this.writeSharedList = new BodiesSharedList();
         this.readSharedList = new BodiesSharedList();
     }
@@ -45,24 +43,6 @@ public class Context {
      */
     public Boundary getBoundary() {
         return boundary;
-    }
-
-    /**
-     * Check if simulation is running yet
-     *
-     * @return true if simulation is running yet
-     */
-    public boolean isKeepWorking() {
-        return keepWorking;
-    }
-
-    /**
-     * Set if simulation can run
-     *
-     * @param keepWorking - to set if simulation can run
-     */
-    public void setKeepWorking(boolean keepWorking) {
-        this.keepWorking = keepWorking;
     }
 
     /**

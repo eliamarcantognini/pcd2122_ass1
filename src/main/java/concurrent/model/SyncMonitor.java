@@ -4,12 +4,6 @@ public class SyncMonitor {
 
     private boolean running = false;
 
-    public synchronized void waitBegin() throws InterruptedException {
-        while (!running) {
-            wait();
-        }
-    }
-
     public synchronized void startSimulation() {
         running = true;
         notify();

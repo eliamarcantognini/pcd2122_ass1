@@ -32,8 +32,8 @@ public class Simulator {
     private long iter;
     private int nBodies;
     private Configuration configuration;
-    private ExecutorService executor;
-    private SyncMonitor syncMonitor;
+    private final ExecutorService executor;
+    private final SyncMonitor syncMonitor;
 
     /**
      * Create the controller and the shared elements in the system, which are the @Context and the CyclicBarrier used
@@ -44,8 +44,8 @@ public class Simulator {
     public Simulator(View viewer) {
 
         this.viewer = viewer;
-        this.readConfiguration(Simulator.CONFIGURATION_FILE_NAME);
-        this.executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()+1);
+        this.readConfiguration();
+        this.executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() + 1);
         this.syncMonitor = new SyncMonitor();
         this.initSimulation();
     }
@@ -114,9 +114,9 @@ public class Simulator {
         this.nSteps = Simulator.STEPS_INIT_WITHOUT_FILE;
     }
 
-    protected void readConfiguration(final String fileConfigurationName) {
+    protected void readConfiguration() {
         try {
-            this.configuration = new Configuration(fileConfigurationName);
+            this.configuration = new Configuration(Simulator.CONFIGURATION_FILE_NAME);
             this.initConfigurationWithFile();
         } catch (FileNotFoundException e) {
             this.initConfigurationWithoutFile();

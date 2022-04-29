@@ -86,15 +86,6 @@ public class GUIView implements View {
             getContentPane().setLayout(new BorderLayout());
             getContentPane().add(btnPanel, BorderLayout.NORTH);
             getContentPane().add(panel, BorderLayout.CENTER);
-//            addWindowListener(new WindowAdapter() {
-//                public void windowClosing(WindowEvent ev) {
-//                    System.exit(0);
-//                }
-//
-//                public void windowClosed(WindowEvent ev) {
-//                    System.exit(0);
-//                }
-//            });
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             this.addKeyListener(new KeyListener() {
                 @Override

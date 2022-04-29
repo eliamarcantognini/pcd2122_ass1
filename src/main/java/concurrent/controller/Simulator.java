@@ -7,7 +7,8 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Class that represents the main controller of the system. Its main responsibility is to manage the
@@ -35,6 +36,8 @@ public class Simulator {
     private int nBodies;
     private boolean stopFromGUI = false;
     private Configuration configuration;
+    private ExecutorService executor;
+    private SyncMonitor syncMonitor;
 
     /**
      * Create the controller and the shared elements in the system, which are the @Context and the CyclicBarrier used
@@ -46,6 +49,8 @@ public class Simulator {
 
         this.viewer = viewer;
         this.readConfiguration(Simulator.CONFIGURATION_FILE_NAME);
+        this.executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()+1);
+        this.syncMonitor = new SyncMonitor();
 //        this.cores = Runtime.getRuntime().availableProcessors();
 //        this.cyclicBarrier = new CyclicBarrier(Math.min(this.nBodies, this.cores), () -> {
 //            updateSimulation(viewer);
@@ -57,6 +62,30 @@ public class Simulator {
 //        });
         this.initSimulation();
         this.viewer.display(readSharedList.getBodies(), vt, iter, context.getBoundary());
+    }
+
+    public void exec() {
+        while (true) {
+            Monitor monitor = new Monitor(readSharedList.getBodies().size());
+            try {
+                this.syncMonitor.waitBegin();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            for (int iter = 0; iter < nSteps && syncMonitor.shouldContinue(); iter++) {
+                for (Body b : readSharedList.getBodies()) {
+                    executor.execute(new UpdateTask(b, this.context, monitor));
+                }
+                try {
+                    monitor.awaitCompletion();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                monitor.reset();
+                this.updateSimulation();
+            }
+            this.initSimulation();
+        }
     }
 
     protected void updateSimulation() {
@@ -76,8 +105,9 @@ public class Simulator {
     public void startSimulation() {
 //        waitForAgentsToClose();
 //        startAgents();
-        Thread t = new BodyService(nSteps, context, this);
-        t.start();
+//        Thread t = new BodyService(nSteps, context, this);
+//        t.start();
+        syncMonitor.startSimulation();
         viewer.setStartEnabled(false);
         viewer.setStopEnabled(true);
     }
@@ -86,7 +116,8 @@ public class Simulator {
      * Method to call when the simulation has to stop, for example when the button Stop from the GUI is pressed.
      */
     public void stopSimulation() {
-        this.stopFromGUI = true;
+//        this.stopFromGUI = true;
+        syncMonitor.stopSimulation();
         viewer.setStopEnabled(false);
     }
 

@@ -4,7 +4,6 @@ import concurrent.model.*;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 public class BodyService extends Thread {
 
@@ -16,7 +15,7 @@ public class BodyService extends Thread {
     private BodiesSharedList writeSharedList;
     private Context context;
     private Simulator simulator;
-    private Monitor monitor;
+    private TaskSyncMonitor taskSyncMonitor;
 
     public BodyService(long nSteps, Context context, Simulator simulator) {
         this.executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()+1);
@@ -25,7 +24,7 @@ public class BodyService extends Thread {
         this.readSharedList = context.getReadSharedList();
         this.writeSharedList = context.getWriteSharedList();
         this.simulator = simulator;
-        this.monitor = new Monitor(readSharedList.getBodies().size());
+        this.taskSyncMonitor = new TaskSyncMonitor(readSharedList.getBodies().size());
         this.stopFromGUI = false;
     }
 
@@ -35,14 +34,14 @@ public class BodyService extends Thread {
     public void run() {
         for (int iter = 0; iter < nSteps && !stopFromGUI; iter++){
             for (Body b: readSharedList.getBodies()) {
-                executor.execute(new UpdateTask(b, this.context, this.monitor));
+                executor.execute(new UpdateTask(b, this.context, this.taskSyncMonitor));
             }
             try {
-                monitor.awaitCompletion();
+                taskSyncMonitor.awaitCompletion();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            monitor.reset();
+            taskSyncMonitor.reset();
             simulator.updateSimulation();
         }
         simulator.initSimulation();

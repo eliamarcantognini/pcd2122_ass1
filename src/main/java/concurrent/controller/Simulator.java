@@ -66,7 +66,7 @@ public class Simulator {
 
     public void exec() {
         while (true) {
-            Monitor monitor = new Monitor(readSharedList.getBodies().size());
+            TaskSyncMonitor taskSyncMonitor = new TaskSyncMonitor(readSharedList.getBodies().size());
             try {
                 this.syncMonitor.waitBegin();
             } catch (InterruptedException e) {
@@ -74,14 +74,14 @@ public class Simulator {
             }
             for (int iter = 0; iter < nSteps && syncMonitor.shouldContinue(); iter++) {
                 for (Body b : readSharedList.getBodies()) {
-                    executor.execute(new UpdateTask(b, this.context, monitor));
+                    executor.execute(new UpdateTask(b, this.context, taskSyncMonitor));
                 }
                 try {
-                    monitor.awaitCompletion();
+                    taskSyncMonitor.awaitCompletion();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                monitor.reset();
+                taskSyncMonitor.reset();
                 this.updateSimulation();
             }
             this.initSimulation();

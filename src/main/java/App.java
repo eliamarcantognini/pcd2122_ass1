@@ -19,5 +19,6 @@ public class App {
 
         Simulator sim = new Simulator(viewer);
         viewer.addListener(new ViewListener(sim));
+        sim.exec();
     }
 }

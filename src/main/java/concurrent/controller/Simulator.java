@@ -61,31 +61,30 @@ public class Simulator {
 //            }
 //        });
         this.initSimulation();
-        this.viewer.display(readSharedList.getBodies(), vt, iter, context.getBoundary());
     }
 
-    public void exec() {
+    private void exec() {
         TaskSyncMonitor taskSyncMonitor = new TaskSyncMonitor(readSharedList.getBodies().size());
-        while (true) {
+//        while (true) {
+//            try {
+//                this.syncMonitor.waitBegin();
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+        for (int iter = 0; iter < nSteps && syncMonitor.shouldContinue(); iter++) {
+            for (Body b : readSharedList.getBodies()) {
+                executor.execute(new UpdateTask(b, this.context, taskSyncMonitor));
+            }
             try {
-                this.syncMonitor.waitBegin();
+                taskSyncMonitor.awaitCompletion();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            for (int iter = 0; iter < nSteps && syncMonitor.shouldContinue(); iter++) {
-                for (Body b : readSharedList.getBodies()) {
-                    executor.execute(new UpdateTask(b, this.context, taskSyncMonitor));
-                }
-                try {
-                    taskSyncMonitor.awaitCompletion();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                taskSyncMonitor.reset();
-                this.updateSimulation();
-            }
-            this.initSimulation();
+            taskSyncMonitor.reset();
+            this.updateSimulation();
         }
+        this.initSimulation();
+//        }
     }
 
     protected void updateSimulation() {
@@ -107,7 +106,8 @@ public class Simulator {
 //        startAgents();
 //        Thread t = new BodyService(nSteps, context, this);
 //        t.start();
-        syncMonitor.startSimulation();
+        this.syncMonitor.startSimulation();
+        new Thread(this::exec).start();
         viewer.setStartEnabled(false);
         viewer.setStopEnabled(true);
     }

@@ -26,7 +26,7 @@ public class SyncMonitor {
      *
      * @return true if simulation is running
      */
-    public synchronized boolean isRunning() {
+    public synchronized boolean isSimulationRunning() {
         return running;
     }
 }

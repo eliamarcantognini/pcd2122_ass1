@@ -107,13 +107,6 @@ public class Simulator {
         viewer.setStopEnabled(false);
     }
 
-    protected void initConfigurationWithoutFile() {
-        this.viewer.showMessage("Configuration file not found. Simulation will be initialized with prefixed data: " + Simulator.BODIES_INIT_WITHOUT_FILE + " bodies and " + Simulator.STEPS_INIT_WITHOUT_FILE + " steps.");
-        this.context = new Context(Simulator.BOUNDARY_INIT_WITHOUT_FILE, Simulator.DT_INIT_WITHOUT_FILE);
-        this.nBodies = Simulator.BODIES_INIT_WITHOUT_FILE;
-        this.nSteps = Simulator.STEPS_INIT_WITHOUT_FILE;
-    }
-
     protected void readConfiguration() {
         try {
             this.configuration = new Configuration(Simulator.CONFIGURATION_FILE_NAME);
@@ -123,13 +116,19 @@ public class Simulator {
         }
     }
 
+    protected void initConfigurationWithoutFile() {
+        this.viewer.showMessage("Configuration file not found. Simulation will be initialized with prefixed data: " + Simulator.BODIES_INIT_WITHOUT_FILE + " bodies and " + Simulator.STEPS_INIT_WITHOUT_FILE + " steps.");
+        this.context = new Context(Simulator.BOUNDARY_INIT_WITHOUT_FILE, Simulator.DT_INIT_WITHOUT_FILE);
+        this.nBodies = Simulator.BODIES_INIT_WITHOUT_FILE;
+        this.nSteps = Simulator.STEPS_INIT_WITHOUT_FILE;
+    }
+
     private void initConfigurationWithFile() {
         Boundary boundary = new Boundary(this.configuration.getLefterBoundary(), this.configuration.getUpperBoundary(), this.configuration.getRighterBoundary(), this.configuration.getLowerBoundary());
         this.context = new Context(boundary, this.configuration.getDT());
         this.nBodies = this.configuration.getBodiesQuantity();
         this.nSteps = this.configuration.getIterationsQuantity();
     }
-
 
     private void createBodies(final int nBodies) {
         List<Body> bodies = new ArrayList<>();

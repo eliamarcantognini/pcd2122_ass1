@@ -1,4 +1,4 @@
-package concurrent.model;
+package async.model;
 
 import java.util.ArrayList;
 import java.util.Collection;

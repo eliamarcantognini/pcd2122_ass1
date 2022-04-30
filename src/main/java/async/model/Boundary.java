@@ -1,4 +1,4 @@
-package concurrent.model;
+package async.model;
 
 /**
  * Boundary of the field where bodies move.

@@ -1,4 +1,4 @@
-package concurrent.model;
+package async.model;
 
 public class TaskSyncMonitor {
 

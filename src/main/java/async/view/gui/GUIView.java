@@ -1,10 +1,10 @@
-package concurrent.view.gui;
+package async.view.gui;
 
-import concurrent.controller.ViewListener;
-import concurrent.model.Body;
-import concurrent.model.Boundary;
-import concurrent.model.Commands;
-import concurrent.view.View;
+import async.controller.ViewListener;
+import async.model.Body;
+import async.model.Boundary;
+import async.model.Commands;
+import async.view.View;
 
 import javax.swing.*;
 import java.awt.*;

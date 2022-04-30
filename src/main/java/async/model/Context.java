@@ -1,12 +1,12 @@
-package concurrent.model;
+package async.model;
 
 /**
  * Context class represents context of the simulation. It contains information about time and limits of two-dimensional
- * world. It also allows to know if simulation is ended or not. It owns two {@link concurrent.model.BodiesSharedList} to use
+ * world. It also allows to know if simulation is ended or not. It owns two {@link async.model.BodiesSharedList} to use
  * one to read and the other to write.
  *
- * @see concurrent.model.BodiesSharedList
- * @see concurrent.model.Boundary
+ * @see async.model.BodiesSharedList
+ * @see async.model.Boundary
  */
 
 public class Context {

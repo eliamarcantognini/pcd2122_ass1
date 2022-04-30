@@ -7,7 +7,7 @@
  * Use is subject to license terms.
  *
  */
-package concurrent.model;
+package async.model;
 
 /**
  * 2-dimensional vector

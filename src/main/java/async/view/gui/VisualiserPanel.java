@@ -1,8 +1,8 @@
-package concurrent.view.gui;
+package async.view.gui;
 
-import concurrent.model.Body;
-import concurrent.model.Boundary;
-import concurrent.model.P2d;
+import async.model.Body;
+import async.model.Boundary;
+import async.model.P2d;
 
 import javax.swing.*;
 import java.awt.*;

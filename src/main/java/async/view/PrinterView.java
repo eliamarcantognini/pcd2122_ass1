@@ -1,9 +1,9 @@
-package concurrent.view;
+package async.view;
 
-import concurrent.controller.ViewListener;
-import concurrent.model.Body;
-import concurrent.model.Boundary;
-import concurrent.model.Commands;
+import async.controller.ViewListener;
+import async.model.Body;
+import async.model.Boundary;
+import async.model.Commands;
 
 import java.util.List;
 import java.util.Timer;

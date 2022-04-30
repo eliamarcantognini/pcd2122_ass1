@@ -125,13 +125,9 @@ public class Simulator {
 
     private void initConfigurationWithFile() {
         Boundary boundary = new Boundary(this.configuration.getLefterBoundary(), this.configuration.getUpperBoundary(), this.configuration.getRighterBoundary(), this.configuration.getLowerBoundary());
-        this.createContext(boundary, this.configuration.getDT());
+        this.context = new Context(boundary, this.configuration.getDT());
         this.nBodies = this.configuration.getBodiesQuantity();
         this.nSteps = this.configuration.getIterationsQuantity();
-    }
-
-    private void createContext(final Boundary boundary, final double dt) {
-        this.context = new Context(boundary, dt);
     }
 
 

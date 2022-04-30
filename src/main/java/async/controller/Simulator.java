@@ -1,7 +1,7 @@
-package concurrent.controller;
+package async.controller;
 
-import concurrent.model.*;
-import concurrent.view.View;
+import async.model.*;
+import async.view.View;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -41,19 +41,16 @@ public class Simulator {
      *
      * @param viewer - the view to be used to display the evolution of the simulation
      */
-    public Simulator(View viewer, int nBodies, long nSteps) {
+    public Simulator(View viewer) {
 
         this.viewer = viewer;
         this.readConfiguration();
         this.executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() + 1);
         this.syncMonitor = new SyncMonitor();
-        this.nBodies = nBodies;
-        this.nSteps = nSteps;
         this.initSimulation();
     }
 
     private void exec() {
-        long t = System.currentTimeMillis();
         TaskSyncMonitor taskSyncMonitor = new TaskSyncMonitor(readSharedList.getBodies().size());
         for (int iter = 0; iter < nSteps && syncMonitor.shouldContinue(); iter++) {
             for (Body b : readSharedList.getBodies()) {
@@ -67,9 +64,6 @@ public class Simulator {
             taskSyncMonitor.reset();
             this.updateSimulation();
         }
-        long ft = System.currentTimeMillis()-t;
-        System.out.println(nBodies + "," + nSteps + "," + ft);
-        System.exit(1);
         this.initSimulation();
     }
 
@@ -113,13 +107,6 @@ public class Simulator {
         viewer.setStopEnabled(false);
     }
 
-    protected void initConfigurationWithoutFile() {
-//        this.viewer.showMessage("Configuration file not found. Simulation will be initialized with prefixed data: " + Simulator.BODIES_INIT_WITHOUT_FILE + " bodies and " + Simulator.STEPS_INIT_WITHOUT_FILE + " steps.");
-        this.context = new Context(Simulator.BOUNDARY_INIT_WITHOUT_FILE, Simulator.DT_INIT_WITHOUT_FILE);
-        this.nBodies = Simulator.BODIES_INIT_WITHOUT_FILE;
-        this.nSteps = Simulator.STEPS_INIT_WITHOUT_FILE;
-    }
-
     protected void readConfiguration() {
         try {
             this.configuration = new Configuration(Simulator.CONFIGURATION_FILE_NAME);
@@ -129,17 +116,19 @@ public class Simulator {
         }
     }
 
+    protected void initConfigurationWithoutFile() {
+        this.viewer.showMessage("Configuration file not found. Simulation will be initialized with prefixed data: " + Simulator.BODIES_INIT_WITHOUT_FILE + " bodies and " + Simulator.STEPS_INIT_WITHOUT_FILE + " steps.");
+        this.context = new Context(Simulator.BOUNDARY_INIT_WITHOUT_FILE, Simulator.DT_INIT_WITHOUT_FILE);
+        this.nBodies = Simulator.BODIES_INIT_WITHOUT_FILE;
+        this.nSteps = Simulator.STEPS_INIT_WITHOUT_FILE;
+    }
+
     private void initConfigurationWithFile() {
         Boundary boundary = new Boundary(this.configuration.getLefterBoundary(), this.configuration.getUpperBoundary(), this.configuration.getRighterBoundary(), this.configuration.getLowerBoundary());
-        this.createContext(boundary, this.configuration.getDT());
+        this.context = new Context(boundary, this.configuration.getDT());
         this.nBodies = this.configuration.getBodiesQuantity();
         this.nSteps = this.configuration.getIterationsQuantity();
     }
-
-    private void createContext(final Boundary boundary, final double dt) {
-        this.context = new Context(boundary, dt);
-    }
-
 
     private void createBodies(final int nBodies) {
         List<Body> bodies = new ArrayList<>();

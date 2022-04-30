@@ -1,4 +1,4 @@
-package concurrent.model;
+package async.model;
 
 public class TaskSyncMonitor {
 
@@ -9,9 +9,11 @@ public class TaskSyncMonitor {
         this.bodyToWait = bodyToWait;
     }
 
-    public synchronized void countMeIn(){
+    public synchronized void countMeIn() {
         counter++;
-        notifyAll();
+        if (counter >= bodyToWait) {
+            notifyAll();
+        }
     }
 
     public synchronized void awaitCompletion() throws InterruptedException {

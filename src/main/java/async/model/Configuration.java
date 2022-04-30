@@ -1,4 +1,4 @@
-package concurrent.model;
+package async.model;
 
 import java.io.File;
 import java.io.FileInputStream;

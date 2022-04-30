@@ -1,8 +1,8 @@
-package concurrent.view;
+package async.view;
 
-import concurrent.controller.ViewListener;
-import concurrent.model.Body;
-import concurrent.model.Boundary;
+import async.controller.ViewListener;
+import async.model.Body;
+import async.model.Boundary;
 
 import java.util.List;
 

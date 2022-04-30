@@ -1,7 +1,12 @@
 package async.model;
 
 /**
- * Class that implements updating body position task.
+ * Class that implements updating body position task. Implements {@link Runnable} so it can be used in threads and
+ * executors.
+ *
+ * @see Runnable
+ * @see java.util.concurrent.Executor
+ * @see java.util.concurrent.ExecutorService
  */
 public class UpdateTask implements Runnable {
 
@@ -13,7 +18,7 @@ public class UpdateTask implements Runnable {
 
     /**
      * Constructor of task. Need body to update during the task, context of the simulation and a monitor to use to
-     * syncrionize tasks.
+     * synchronize tasks.
      *
      * @param body the body to update
      * @param context the simulation context

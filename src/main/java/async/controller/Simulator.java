@@ -52,7 +52,7 @@ public class Simulator {
 
     private void exec() {
         TaskSyncMonitor taskSyncMonitor = new TaskSyncMonitor(readSharedList.getBodies().size());
-        for (int iter = 0; iter < nSteps && syncMonitor.shouldContinue(); iter++) {
+        for (int iter = 0; iter < nSteps && syncMonitor.isRunning(); iter++) {
             for (Body b : readSharedList.getBodies()) {
                 executor.execute(new UpdateTask(b, this.context, taskSyncMonitor));
             }

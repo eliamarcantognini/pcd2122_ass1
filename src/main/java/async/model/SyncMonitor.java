@@ -6,7 +6,6 @@ public class SyncMonitor {
 
     public synchronized void startSimulation() {
         running = true;
-        notify();
     }
 
     public synchronized void stopSimulation() {

@@ -1,5 +1,8 @@
 package async.model;
 
+/**
+ * Class that implements updating body position task.
+ */
 public class UpdateTask implements Runnable {
 
     private final Body body;
@@ -8,6 +11,14 @@ public class UpdateTask implements Runnable {
     private final Context context;
     private final TaskSyncMonitor taskSyncMonitor;
 
+    /**
+     * Constructor of task. Need body to update during the task, context of the simulation and a monitor to use to
+     * syncrionize tasks.
+     *
+     * @param body the body to update
+     * @param context the simulation context
+     * @param taskSyncMonitor monitor used to notify end of task
+     */
     public UpdateTask(Body body, Context context, TaskSyncMonitor taskSyncMonitor) {
         this.body = new Body(body);
         this.context = context;

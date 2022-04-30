@@ -1,8 +1,8 @@
-import concurrent.controller.Simulator;
-import concurrent.controller.ViewListener;
-import concurrent.view.PrinterView;
-import concurrent.view.View;
-import concurrent.view.gui.GUIView;
+import async.controller.Simulator;
+import async.controller.ViewListener;
+import async.view.PrinterView;
+import async.view.View;
+import async.view.gui.GUIView;
 
 /*
  * Elaborato di Elia Marcantognini, Michele Bachetti, Angelo Tinti
